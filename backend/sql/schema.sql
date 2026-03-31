@@ -1,0 +1,59 @@
+CREATE DATABASE IF NOT EXISTS gigshield_insurance;
+USE gigshield_insurance;
+
+CREATE TABLE IF NOT EXISTS users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(120) NOT NULL,
+  email VARCHAR(190) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  city VARCHAR(120) NOT NULL,
+  platform VARCHAR(120) NOT NULL,
+  weekly_income DECIMAL(10,2) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS policies (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  premium DECIMAL(10,2) NOT NULL,
+  coverage_percentage DECIMAL(5,2) NOT NULL,
+  start_date DATE NOT NULL,
+  status ENUM('active', 'inactive', 'cancelled') DEFAULT 'active',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_policy_user
+    FOREIGN KEY (user_id) REFERENCES users(id)
+    ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS events (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  city VARCHAR(120) NOT NULL,
+  rainfall DECIMAL(8,2) NOT NULL,
+  temperature DECIMAL(8,2) NOT NULL DEFAULT 0,
+  aqi DECIMAL(8,2) NOT NULL,
+  pollution_level VARCHAR(50) NULL,
+  event_date DATE NOT NULL,
+  triggered BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS payouts (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  policy_id INT NOT NULL,
+  event_id INT NOT NULL,
+  amount DECIMAL(10,2) NOT NULL,
+  flagged BOOLEAN DEFAULT FALSE,
+  flag_reason VARCHAR(255) NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_payout_user
+    FOREIGN KEY (user_id) REFERENCES users(id)
+    ON DELETE CASCADE,
+  CONSTRAINT fk_payout_policy
+    FOREIGN KEY (policy_id) REFERENCES policies(id)
+    ON DELETE CASCADE,
+  CONSTRAINT fk_payout_event
+    FOREIGN KEY (event_id) REFERENCES events(id)
+    ON DELETE CASCADE,
+  UNIQUE KEY uq_user_event (user_id, event_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

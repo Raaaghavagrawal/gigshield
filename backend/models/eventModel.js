@@ -1,0 +1,77 @@
+const { pool } = require("../config/db");
+
+async function columnExists(tableName, columnName) {
+  const [rows] = await pool.execute(
+    `SELECT 1 AS ok
+     FROM information_schema.columns
+     WHERE table_schema = DATABASE()
+       AND table_name = ?
+       AND column_name = ?
+     LIMIT 1`,
+    [tableName, columnName]
+  );
+  return Boolean(rows.length);
+}
+
+async function ensureColumn(tableName, columnName, columnDefinitionSql) {
+  const exists = await columnExists(tableName, columnName);
+  if (exists) return;
+
+  try {
+    await pool.execute(
+      `ALTER TABLE \`${tableName}\`
+       ADD COLUMN \`${columnName}\` ${columnDefinitionSql}`
+    );
+  } catch (error) {
+    // In case of race condition between multiple instances
+    if (error && error.code === "ER_DUP_FIELDNAME") return;
+    throw error;
+  }
+}
+
+async function syncEventTableSchema() {
+  await ensureColumn("events", "temperature", "DECIMAL(8,2) NOT NULL DEFAULT 0");
+  await ensureColumn("events", "pollution_level", "VARCHAR(50) NULL");
+}
+
+async function createEvent({
+  city,
+  rainfall,
+  temperature,
+  aqi,
+  pollutionLevel,
+  eventDate,
+  triggered,
+}) {
+  const [result] = await pool.execute(
+    `INSERT INTO events (city, rainfall, temperature, aqi, pollution_level, event_date, triggered)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [city, rainfall, temperature, aqi, pollutionLevel, eventDate, triggered]
+  );
+  return result.insertId;
+}
+
+async function getLatestEventByCity(city) {
+  const [rows] = await pool.execute(
+    `SELECT * FROM events
+     WHERE city = ?
+     ORDER BY event_date DESC, id DESC
+     LIMIT 1`,
+    [city]
+  );
+  return rows[0] || null;
+}
+
+async function getEventById(eventId) {
+  const [rows] = await pool.execute("SELECT * FROM events WHERE id = ?", [
+    eventId,
+  ]);
+  return rows[0] || null;
+}
+
+module.exports = {
+  syncEventTableSchema,
+  createEvent,
+  getLatestEventByCity,
+  getEventById,
+};
