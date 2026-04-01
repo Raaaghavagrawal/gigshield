@@ -3,6 +3,7 @@ const express = require("express");
 const morgan = require("morgan");
 const { testDbConnection } = require("./config/db");
 const { syncEventTableSchema } = require("./models/eventModel");
+const { syncPayoutTableSchema } = require("./models/payoutModel");
 const { startCronJobs } = require("./jobs/cronJob");
 
 const authRoutes = require("./routes/authRoutes");
@@ -11,6 +12,8 @@ const eventRoutes = require("./routes/eventRoutes");
 const payoutRoutes = require("./routes/payoutRoutes");
 const riskRoutes = require("./routes/riskRoutes");
 const analyzeRoutes = require("./routes/analyzeRoutes");
+const aiRoutes = require("./routes/aiRoutes");
+const statsRoutes = require("./routes/statsRoutes");
 
 const app = express();
 
@@ -24,9 +27,15 @@ app.get("/health", (_req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/policies", policyRoutes);
 app.use("/api/events", eventRoutes);
-app.use("/api/payouts", payoutRoutes);
+app.use("/payout", payoutRoutes);
+app.use("/wallet", payoutRoutes);
+app.use("/payouts", payoutRoutes);
 app.use("/api/risk-score", riskRoutes);
 app.use("/api/analyze", analyzeRoutes);
+app.use("/ai", aiRoutes);
+app.use("/api/stats", statsRoutes);
+app.use("/dashboard", statsRoutes); // Exact requirement from latest prompt
+
 
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
@@ -45,6 +54,7 @@ async function startServer() {
   try {
     await testDbConnection();
     await syncEventTableSchema();
+    await syncPayoutTableSchema();
     app.listen(PORT, () => {
       console.log(`Server running at http://localhost:${PORT}`);
       startCronJobs();

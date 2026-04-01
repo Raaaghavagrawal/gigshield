@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
   /* Colors - Deep Slate & Cyber Blue Palette */
@@ -39,7 +39,7 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   background: var(--bg-deep);
   color: var(--text-main);
   overflow-x: hidden;
@@ -52,7 +52,7 @@ html {
 }
 
 h1, h2, h3, h4, .font-heading {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
 /* Base scrollbar */
@@ -1069,6 +1069,34 @@ section {
   font-weight: 700;
 }
 
+.dash-insights {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dash-insight {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(2, 6, 23, 0.25);
+  color: rgba(226, 232, 240, 0.95);
+  line-height: 1.5;
+}
+
+.dash-insight-dot {
+  margin-top: 7px;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(16, 185, 129, 0.9);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+  flex: 0 0 auto;
+}
+
 @media (max-width: 1200px) {
   .dash-layout {
     grid-template-columns: 300px minmax(0, 1fr);
@@ -1121,6 +1149,7 @@ section {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  overflow-y: auto;
 }
 
 .dash3-brand {
@@ -1167,6 +1196,11 @@ section {
   width: 100%;
 }
 
+.dash3-search:focus-within {
+  border-color: rgba(99, 102, 241, 0.55);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.10);
+}
+
 .dash3-nav {
   display: flex;
   flex-direction: column;
@@ -1194,8 +1228,9 @@ section {
 
 .dash3-nav button.active {
   color: rgba(248, 250, 252, 0.95);
-  border-color: rgba(245, 158, 11, 0.35);
-  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(99, 102, 241, 0.45);
+  background: rgba(99, 102, 241, 0.12);
+  box-shadow: inset 4px 0 0 rgba(16, 185, 129, 0.85);
 }
 
 .dash3-sidecard {
@@ -1314,9 +1349,9 @@ section {
   align-items: center;
   justify-content: center;
   margin: 0 auto 12px;
-  background: rgba(245, 158, 11, 0.12);
-  border: 1px solid rgba(245, 158, 11, 0.22);
-  color: rgba(253, 230, 138, 0.95);
+  background: rgba(99, 102, 241, 0.14);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: rgba(167, 243, 208, 0.95);
 }
 
 .dash3-hero-center h2 {
@@ -1351,8 +1386,8 @@ section {
 }
 
 .dash3-hero-search button {
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  background: rgba(245, 158, 11, 0.18);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  background: rgba(16, 185, 129, 0.14);
   color: rgba(248, 250, 252, 0.95);
   border-radius: 14px;
   font-weight: 950;
@@ -1362,7 +1397,8 @@ section {
 .dash3-hero-cta {
   margin-top: 14px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(99, 102, 241, 0.18);
+  background: rgba(99, 102, 241, 0.14);
+  box-shadow: inset 4px 0 0 rgba(16, 185, 129, 0.65);
   color: rgba(248, 250, 252, 0.95);
   border-radius: 14px;
   padding: 10px 14px;
@@ -1384,10 +1420,12 @@ section {
   cursor: pointer;
   text-align: left;
   color: rgba(248, 250, 252, 0.95);
+  min-height: 130px;
 }
 
 .dash3-tile:hover {
-  border-color: rgba(245, 158, 11, 0.22);
+  border-color: rgba(99, 102, 241, 0.28);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.06);
 }
 
 .dash3-tile-icon {
@@ -1432,4 +1470,25 @@ section {
   .dash3-tiles {
     grid-template-columns: 1fr;
   }
+}
+
+/* AI Insights Styles */
+.markdown-content p {
+  margin-bottom: 0.5rem;
+}
+.markdown-content strong {
+  color: #fff;
+  font-weight: 700;
+}
+.markdown-content ul {
+  margin-left: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+.markdown-content li {
+  margin-bottom: 0.25rem;
+}
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.5; }
+  100% { transform: scale(1); opacity: 1; }
 }

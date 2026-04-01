@@ -26,6 +26,7 @@ import {
   YAxis,
 } from "recharts";
 import { api, getAuthHeaders } from "../utils/api";
+import { buildExplainableInsights } from "../utils/insights";
 
 const chartTemplate = [
   { t: "09:00", risk: 18 },
@@ -56,6 +57,11 @@ function DashboardPage() {
       risk: Math.max(8, Math.min(100, analysis.risk.risk_score - 20 + i * 7)),
     }));
   }, [analysis]);
+
+  const explainableInsights = useMemo(
+    () => buildExplainableInsights(analysis),
+    [analysis]
+  );
 
   const loadWallet = async () => {
     try {
@@ -388,6 +394,28 @@ function DashboardPage() {
                     <div className="metric-sub">
                       Wallet: ₹{wallet?.wallet_balance?.toLocaleString?.() ?? "0"}
                     </div>
+                  </div>
+                </div>
+
+                <div className="panel">
+                  <div className="panel-head">
+                    <div className="panel-title">Explainable AI insights</div>
+                    <div className="panel-subtitle">
+                      Human-readable summary of why this risk score/payout was produced
+                    </div>
+                  </div>
+                  <div className="dash-insights">
+                    {explainableInsights.map((line, idx) => (
+                      <div className="dash-insight" key={idx}>
+                        <span className="dash-insight-dot" aria-hidden="true" />
+                        <span>{line}</span>
+                      </div>
+                    ))}
+                    {!analysis && (
+                      <div className="dash-empty">
+                        Run an analysis to generate explainable insights.
+                      </div>
+                    )}
                   </div>
                 </div>
               </main>

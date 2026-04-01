@@ -4,6 +4,7 @@ const {
   createUser,
   getUserByEmail,
   getUserById,
+  touchUserActivity,
 } = require("../models/userModel");
 
 function signToken(payload) {
@@ -34,6 +35,9 @@ async function signup(req, res, next) {
       platform,
       weeklyIncome: Number(weekly_income),
     });
+
+    const { initializeWallet } = require("../services/walletService");
+    await initializeWallet(userId);
 
     const token = signToken({ userId });
     const user = await getUserById(userId);
@@ -66,6 +70,7 @@ async function login(req, res, next) {
     }
 
     const token = signToken({ userId: user.id });
+    await touchUserActivity(user.id);
     return res.json({
       message: "Login successful",
       token,

@@ -57,6 +57,25 @@ async function analyzeCityRisk(req, res, next) {
     const predictedLoss = Number(((weeklyIncome * payoutPercentage) / 100).toFixed(2));
     const fraudFlagged = highRisk && weeklyIncome < 1000;
 
+    const insights = [];
+    if (rainfall > 50) {
+      insights.push(`🚨 **Heavy Rainfall Detected**: Current precipitation is **${rainfall}mm**. This significantly impacts road visibility and travel safety.`);
+    } else if (rainfall > 20) {
+      insights.push(`🌧️ **Moderate Rain**: Falling rain (${rainfall}mm) may cause minor delays in delivery logistics.`);
+    }
+
+    if (aqi > 300) {
+      insights.push(`😷 **Hazardous Air Quality**: AQI is recorded at **${aqi}**. This level is hazardous and may restrict outdoor labor.`);
+    } else if (aqi > 150) {
+      insights.push(`🌫️ **Poor Visibility**: AQI is **${aqi}**, creating hazy conditions that could slow down transit speeds.`);
+    }
+
+    if (highRisk) {
+      insights.push(`✅ **Trigger Verified**: Gig-disruption parameters have been met. A payout of **₹${predictedLoss}** is recommended for immediate release.`);
+    } else {
+      insights.push(`✨ **Operational Stability**: Normal environmental conditions detected. No immediate risk to gig income found.`);
+    }
+
     return res.json({
       city,
       weekly_income: weeklyIncome,
@@ -74,6 +93,7 @@ async function analyzeCityRisk(req, res, next) {
         trigger_met: highRisk,
         auto_payout: highRisk,
       },
+      insights,
       fraud: {
         fraud_risk: fraudFlagged ? "HIGH" : "LOW",
         fraud_flagged: fraudFlagged,

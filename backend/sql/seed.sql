@@ -15,3 +15,8 @@ INSERT INTO events (city, rainfall, aqi, event_date, triggered) VALUES
 ('Mumbai', 75.00, 160.00, '2026-03-28', TRUE),
 ('Delhi', 10.00, 340.00, '2026-03-28', TRUE),
 ('Bangalore', 12.00, 90.00, '2026-03-28', FALSE);
+
+INSERT INTO wallets (user_id, balance) VALUES
+(1, 0.00),
+(2, 0.00),
+(3, 0.00);

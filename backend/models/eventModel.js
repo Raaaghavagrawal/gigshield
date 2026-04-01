@@ -69,9 +69,21 @@ async function getEventById(eventId) {
   return rows[0] || null;
 }
 
+async function getLatestTriggeredEventByCity(city) {
+  const [rows] = await pool.execute(
+    `SELECT * FROM events
+     WHERE city = ? AND triggered = TRUE
+     ORDER BY event_date DESC, id DESC
+     LIMIT 1`,
+    [city]
+  );
+  return rows[0] || null;
+}
+
 module.exports = {
   syncEventTableSchema,
   createEvent,
   getLatestEventByCity,
+  getLatestTriggeredEventByCity,
   getEventById,
 };

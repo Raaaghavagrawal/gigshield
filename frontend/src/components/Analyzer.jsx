@@ -1,7 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, IndianRupee, Search, CloudRain, Wind, AlertTriangle, Zap, CheckCircle2, Navigation, Info } from 'lucide-react';
+import { MapPin, IndianRupee, Search, CloudRain, Wind, AlertTriangle, Zap, CheckCircle2, Navigation, Info, Sparkles } from 'lucide-react';
 import axios from 'axios';
+import ReactMarkdown from 'react-markdown';
+
+const TypingInsight = ({ text, index: insightIndex }) => {
+  const [displayedText, setDisplayedText] = useState("");
+  const [isDone, setIsDone] = useState(false);
+
+  useEffect(() => {
+    let currentText = "";
+    let i = 0;
+    const interval = setInterval(() => {
+      if (i < text.length) {
+        currentText += text[i];
+        setDisplayedText(currentText);
+        i++;
+      } else {
+        setIsDone(true);
+        clearInterval(interval);
+      }
+    }, 15);
+    return () => clearInterval(interval);
+  }, [text]);
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, y: 5 }}
+      animate={{ opacity: 1, y: 0 }}
+      style={{ display: 'flex', gap: '12px', fontSize: '0.95rem', color: '#cbd5e1', lineHeight: '1.6', marginBottom: '8px' }}
+    >
+       <div style={{ marginTop: '8px' }}>
+          {isDone ? (
+            <div style={{ width: '6px', height: '6px', background: '#6366f1', borderRadius: '50%' }}></div>
+          ) : (
+            <div style={{ width: '6px', height: '6px', background: '#6366f1', borderRadius: '50%', animation: 'pulse 1s infinite' }}></div>
+          )}
+       </div>
+       <div className="markdown-content">
+         <ReactMarkdown>{displayedText}</ReactMarkdown>
+       </div>
+    </motion.div>
+  );
+};
 
 const Analyzer = () => {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
@@ -47,9 +88,9 @@ const Analyzer = () => {
         weather: { condition: "Heavy Rain", rainfall: 82, aqi: 145 },
         risk: { risk_level: "HIGH", risk_score: 85, predicted_loss: income * 0.3, suggested_payout: income * 0.3, trigger_met: true, payout_percentage: 30 },
         insights: [
-          "Monsoon peak detected in your zone (82mm rain).",
-          "AQI is above sensitive limits (145), slowing delivery speeds.",
-          "Recommendation: Activate Elite Protection for 100% coverage."
+          "🚨 **Monsoon peak detected** in your current geographic zone (**82mm rainfall**).",
+          "😷 **AQI is above sensitive limits (145)**, which typically results in a 15-20% reduction in average delivery velocities.",
+          "💡 **Intelligence Hint**: Most riders in this condition prefer the 'Elite' protection tier for maximum coverage."
         ]
       });
     } finally {
@@ -169,19 +210,23 @@ const Analyzer = () => {
                    </div>
 
                    {/* AI Insights */}
-                   <div className="glass-card" style={{ padding: '24px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                         <Info size={18} className="text-indigo-400" />
-                         <span style={{ fontWeight: 800, fontSize: '0.9rem' }}>AI Forecast Insights</span>
+                   <div className="glass-card" style={{ padding: '28px', border: '1px solid rgba(99, 102, 241, 0.2)', background: 'linear-gradient(180deg, rgba(99, 102, 241, 0.05) 0%, transparent 100%)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Sparkles size={20} className="text-indigo-400" />
+                            <span style={{ fontWeight: 800, fontSize: '1rem', tracking: '0.02em' }}>AI INTELLIGENCE REPORT</span>
+                         </div>
+                         <div style={{ fontSize: '0.65rem', fontWeight: 900, color: '#6366f1', background: 'rgba(99, 102, 241, 0.1)', padding: '4px 10px', borderRadius: '100px' }}>
+                            LIVE ANALYSIS
+                         </div>
                       </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                         {data.insights ? data.insights.map((insight, i) => (
-                           <div key={i} style={{ display: 'flex', gap: '10px', fontSize: '0.85rem', color: '#cbd5e1' }}>
-                              <div style={{ minWidth: '4px', height: '4px', background: '#6366f1', borderRadius: '50%', marginTop: '8px' }}></div>
-                              {insight}
-                           </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                         {data.insights && data.insights.length > 0 ? data.insights.map((insight, i) => (
+                           <TypingInsight key={i} text={insight} index={i} />
                          )) : (
-                            <div style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>Stability detected. No immediate risk triggers found.</div>
+                            <div style={{ fontSize: '0.9rem', color: '#94a3b8', fontStyle: 'italic' }}>
+                               Analyzing atmospheric stability... No disruption triggers detected within the parametric bounds.
+                            </div>
                          )}
                       </div>
                    </div>
