@@ -19,7 +19,14 @@ import {
 import {
   Area,
   AreaChart,
+  Bar,
+  BarChart,
   CartesianGrid,
+  Cell,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -78,6 +85,55 @@ function DashboardPage() {
     loadWallet();
   }, []);
 
+  const [theme, setTheme] = useState("dark");
+  const [stats, setStats] = useState({ totalUsers: 0, totalPayouts: 0, protectedIncome: 0 });
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
+
+  const fetchStats = async () => {
+    try {
+      const res = await api.get("/stats/dashboard", getAuthHeaders());
+      // The API returns the stats object directly at res.data
+      setStats(res.data || {});
+    } catch (e) {
+      console.error("Fetch Stats Error:", e);
+    }
+  };
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  const barData = [
+    { name: "01", val: 400 },
+    { name: "02", val: 300 },
+    { name: "03", val: 500 },
+    { name: "04", val: 200 },
+    { name: "05", val: 600 },
+    { name: "06", val: 700 },
+    { name: "07", val: 450 },
+    { name: "08", val: 320 },
+    { name: "09", val: 800 },
+    { name: "10", val: 560 },
+  ];
+
+  const pieData = [
+    { name: "Afternoon", value: 40, color: "#6366f1" },
+    { name: "Evening", value: 32, color: "#a78bfa" },
+    { name: "Morning", value: 28, color: "#c4b5fd" },
+  ];
+
+  const lineData = [
+    { name: "01", val: 100 },
+    { name: "02", val: 340 },
+    { name: "03", val: 210 },
+    { name: "04", val: 560 },
+    { name: "05", val: 320 },
+    { name: "06", val: 740 },
+  ];
+
   const handleAnalyze = async () => {
     setLoading(true);
     setError("");
@@ -96,7 +152,7 @@ function DashboardPage() {
     }
   };
 
-  const logout = () => {
+  const handleLogout = () => {
     localStorage.removeItem("gigshield_token");
     localStorage.removeItem("gigshield_user");
     navigate("/auth");
@@ -177,73 +233,120 @@ function DashboardPage() {
                   : "Updates"}
           </div>
           <div className="dash3-topbar-actions">
-            {lastUpdatedAt && (
-              <span className="dash3-muted">
-                Updated {lastUpdatedAt.toLocaleTimeString()}
-              </span>
-            )}
-            <button className="dash3-iconbtn" onClick={loadWallet} title="Refresh">
+            <span className="dash3-muted">System Live</span>
+            <button
+              className="dash3-iconbtn"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            >
               <RefreshCcw size={16} />
             </button>
-            <button className="dash3-logout" onClick={logout}>
-              <LogOut size={16} /> Logout
+            <button className="dash3-logout" onClick={handleLogout}>
+              <LogOut size={16} />
+              Logout
             </button>
           </div>
         </header>
 
         {activeTab === "overview" && (
           <section className="dash3-content">
-            <div className="dash3-hero panel">
-              <div className="dash3-hero-center">
-                <div className="dash3-hero-icon">
-                  <Search size={18} />
+            <div className="dash3-grid-main">
+              <div className="dash3-panel dash3-panel--main">
+                <div className="panel-header">
+                  <div>
+                    <h4 className="panel-label">Income Projection</h4>
+                    <h2 className="panel-value">₹ {((stats && stats.protectedIncome) || 0).toLocaleString()}</h2>
+                    <p className="panel-change success">↑ 2.1% vs last month</p>
+                  </div>
+                  <button className="panel-action">View Report</button>
                 </div>
-                <h2>Welcome to GigShield</h2>
-                <p>
-                  Your personal income protection terminal with real-time signals,
-                  AI insights, and parametric triggers.
-                </p>
-
-                <div className="dash3-hero-search">
-                  <input
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    placeholder="Delhi"
-                  />
-                  <button onClick={runQuickAnalyze} disabled={loading}>
-                    {loading ? "Searching..." : "Analyze"}
-                  </button>
+                <div className="panel-chart-large">
+                  <ResponsiveContainer width="100%" height={240}>
+                    <BarChart data={barData}>
+                      <Bar dataKey="val" fill="#6366f1" radius={[4, 4, 0, 0]} />
+                      <Tooltip />
+                    </BarChart>
+                  </ResponsiveContainer>
                 </div>
+              </div>
 
-                {error && <p className="auth-error">{error}</p>}
-
-                <button className="dash3-hero-cta" type="button" onClick={() => setActiveTab("risk")}>
-                  Open Risk Dashboard
-                </button>
+              <div className="dash3-panel dash3-panel--side">
+                <div className="panel-header">
+                  <h4 className="panel-label">Risk Distribution</h4>
+                </div>
+                <div className="panel-chart-donut">
+                  <ResponsiveContainer width="100%" height={180}>
+                    <PieChart>
+                      <Pie
+                        data={pieData}
+                        innerRadius={60}
+                        outerRadius={80}
+                        paddingAngle={5}
+                        dataKey="value"
+                      >
+                        {pieData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="chart-legend">
+                    {pieData.map((d) => (
+                      <div key={d.name} className="legend-item">
+                        <span className="dot" style={{ background: d.color }} />
+                        <span className="name">{d.name}</span>
+                        <span className="pct">{d.value}%</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div className="dash3-tiles">
-              <button className="dash3-tile" onClick={() => setActiveTab("overview")}>
-                <div className="dash3-tile-icon">📊</div>
-                <div className="dash3-tile-title">Overview</div>
-                <div className="dash3-tile-sub">Signals at a glance</div>
-              </button>
-              <button className="dash3-tile" onClick={() => setActiveTab("risk")}>
-                <div className="dash3-tile-icon">🧠</div>
-                <div className="dash3-tile-title">AI & Risk</div>
-                <div className="dash3-tile-sub">Forecast + triggers</div>
-              </button>
-              <button className="dash3-tile" onClick={() => setActiveTab("wallet")}>
-                <div className="dash3-tile-icon">💳</div>
-                <div className="dash3-tile-title">Wallet</div>
-                <div className="dash3-tile-sub">Payout ledger</div>
-              </button>
-              <button className="dash3-tile" onClick={() => setActiveTab("news")}>
-                <div className="dash3-tile-icon">🛰️</div>
-                <div className="dash3-tile-title">Updates</div>
-                <div className="dash3-tile-sub">System status</div>
-              </button>
+            <div className="dash3-grid-bottom">
+              <div className="dash3-panel dash3-panel--sm">
+                <h4 className="panel-label">Platform Rating</h4>
+                <div className="rating-bubbles">
+                  <div className="bubble b1"><span>92%</span> Reliability</div>
+                  <div className="bubble b2"><span>85%</span> Speed</div>
+                  <div className="bubble b3"><span>85%</span> UI</div>
+                </div>
+              </div>
+
+              <div className="dash3-panel dash3-panel--md">
+                <h4 className="panel-label">Recent Risk Events</h4>
+                <div className="event-list-mini">
+                  {[
+                    { name: "Heavy Rainfall", city: "Mumbai", triggered: true },
+                    { name: "Critical AQI", city: "Delhi", triggered: true },
+                    { name: "Moderate Heat", city: "Chennai", triggered: false },
+                  ].map((ev, i) => (
+                    <div key={i} className="mini-event-row">
+                      <div className="ev-icon">{ev.triggered ? "⚡" : "🧊"}</div>
+                      <div className="ev-info">
+                        <div className="ev-name">{ev.name}</div>
+                        <div className="ev-city">{ev.city}</div>
+                      </div>
+                      <div className={`ev-status ${ev.triggered ? 'on' : 'off'}`}>
+                        {ev.triggered ? 'Payout' : 'Watch'}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="dash3-panel dash3-panel--md">
+                <div className="panel-header">
+                  <h4 className="panel-label">Payout Trends</h4>
+                  <div className="trend-val">₹ {((stats && stats.totalPayouts) || 0).toLocaleString()}</div>
+                </div>
+                <ResponsiveContainer width="100%" height={120}>
+                  <LineChart data={lineData}>
+                    <Line type="monotone" dataKey="val" stroke="#8b5cf6" strokeWidth={3} dot={false} />
+                    <Tooltip />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           </section>
         )}

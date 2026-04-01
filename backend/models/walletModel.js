@@ -1,7 +1,15 @@
 const { pool } = require("../config/db");
 
 async function syncWalletTableSchema() {
-  // Can be used to ensure columns if needed
+  await pool.execute(`
+    CREATE TABLE IF NOT EXISTS wallets (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      user_id INT NOT NULL UNIQUE,
+      balance DECIMAL(15, 2) DEFAULT 0.00,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB;
+  `);
 }
 
 async function createWallet(userId) {
@@ -32,6 +40,7 @@ async function updateWalletBalance(userId, amount) {
 }
 
 module.exports = {
+  syncWalletTableSchema,
   createWallet,
   getWalletByUserId,
   updateWalletBalance,

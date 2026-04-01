@@ -4,6 +4,7 @@ const morgan = require("morgan");
 const { testDbConnection } = require("./config/db");
 const { syncEventTableSchema } = require("./models/eventModel");
 const { syncPayoutTableSchema } = require("./models/payoutModel");
+const { syncWalletTableSchema } = require("./models/walletModel");
 const { startCronJobs } = require("./jobs/cronJob");
 
 const authRoutes = require("./routes/authRoutes");
@@ -55,6 +56,7 @@ async function startServer() {
     await testDbConnection();
     await syncEventTableSchema();
     await syncPayoutTableSchema();
+    await syncWalletTableSchema();
     app.listen(PORT, () => {
       console.log(`Server running at http://localhost:${PORT}`);
       startCronJobs();
