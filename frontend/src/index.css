@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   /* Dark / Default Theme (Deep Slate & Cyber Blue) */
   --bg-deep:     #020617;
@@ -13,7 +17,7 @@
   --text-muted:  #94a3b8;
   --text-dim:    #475569;
   --border:      rgba(255, 255, 255, 0.08);
-  --success:     #10b981;
+  --success:     #6366f1;
   --warning:     #f59e0b;
   --error:       #ef4444;
   --glass-blur:  16px;
@@ -39,15 +43,19 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: 'Poppins', sans-serif !important;
 }
 
 body {
-  font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   background: var(--bg-deep);
   color: var(--text-main);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   line-height: 1.6;
+}
+
+::placeholder {
+  font-family: 'Poppins', sans-serif !important;
 }
 
 html {
@@ -157,10 +165,10 @@ section {
 }
 
 .nav-logo-icon {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
   padding: 8px;
   border-radius: 12px;
-  box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -174,7 +182,7 @@ section {
 }
 
 .nav-logo-highlight {
-  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -204,7 +212,7 @@ section {
   left: 0;
   width: 0%;
   height: 2px;
-  background: #10b981;
+  background: #6366f1;
   transition: width 300ms ease;
   border-radius: 2px;
 }
@@ -226,17 +234,17 @@ section {
   font-weight: 800;
   padding: 10px 18px;
   border-radius: 14px;
-  border: 1px solid rgba(16, 185, 129, 0.5);
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.4) 100%);
-  box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+  border: 1px solid rgba(99, 102, 241, 0.5);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(5, 150, 105, 0.4) 100%);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
   transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .landing-nav-cta.premium-btn:hover {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.3) 0%, rgba(5, 150, 105, 0.5) 100%);
-  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.3) 0%, rgba(5, 150, 105, 0.5) 100%);
+  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
   transform: translateY(-2px);
-  border-color: rgba(16, 185, 129, 0.8);
+  border-color: rgba(99, 102, 241, 0.8);
 }
 
 .mobile-menu-btn {
@@ -412,7 +420,8 @@ section {
 }
 
 .auth-left {
-  background: #0a2a20;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(16px);
   border-right: 1px solid rgba(255, 255, 255, 0.08);
   padding: 28px;
   display: flex;
@@ -435,9 +444,9 @@ section {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.25);
-  color: rgba(167, 243, 208, 0.95);
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  color: rgba(199, 210, 254, 0.95);
 }
 
 .auth-left-name {
@@ -453,7 +462,7 @@ section {
   font-size: 4rem;
   letter-spacing: 0.09em;
   font-weight: 900;
-  color: rgba(167, 243, 208, 0.85);
+  color: rgba(199, 210, 254, 0.85);
   text-transform: uppercase;
 }
 
@@ -496,9 +505,9 @@ section {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.22);
-  color: rgba(167, 243, 208, 0.9);
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.22);
+  color: rgba(199, 210, 254, 0.9);
 }
 
 .auth-left-option-title {
@@ -587,9 +596,9 @@ section {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.25);
-  color: rgba(167, 243, 208, 0.95);
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  color: rgba(199, 210, 254, 0.95);
   flex: 0 0 auto;
 }
 
@@ -635,8 +644,8 @@ section {
 }
 
 .auth-toggle button.active {
-  border-color: rgba(16, 185, 129, 0.45);
-  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(99, 102, 241, 0.45);
+  background: rgba(99, 102, 241, 0.12);
 }
 
 .auth-form {
@@ -692,8 +701,8 @@ section {
 
 .auth-form input:focus,
 .auth-form select:focus {
-  border-color: rgba(16, 185, 129, 0.45);
-  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12);
+  border-color: rgba(99, 102, 241, 0.45);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
 }
 
 .auth-icon-button {
@@ -710,7 +719,7 @@ section {
 }
 
 .auth-icon-button:hover {
-  border-color: rgba(16, 185, 129, 0.3);
+  border-color: rgba(99, 102, 241, 0.3);
 }
 
 .auth-submit {
@@ -721,13 +730,13 @@ section {
   font-weight: 700;
   cursor: pointer;
   color: #fff;
-  background: #065f46;
+  background: #4f46e5;
   box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35);
   transition: transform 120ms var(--ease-out), box-shadow 120ms var(--ease-out), filter 120ms var(--ease-out);
 }
 
 .auth-submit--solid {
-  background: #065f46;
+  background: #4f46e5;
 }
 
 .auth-submit:hover {
@@ -773,7 +782,7 @@ section {
 .auth-link {
   background: transparent;
   border: none;
-  color: rgba(167, 243, 208, 0.85);
+  color: rgba(199, 210, 254, 0.85);
   font-size: 0.78rem;
   font-weight: 700;
   cursor: not-allowed;
@@ -846,8 +855,8 @@ section {
   gap: 8px;
   padding: 8px 10px;
   border-radius: 12px;
-  border: 1px solid rgba(16, 185, 129, 0.25);
-  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  background: rgba(99, 102, 241, 0.12);
   color: rgba(248, 250, 252, 0.95);
   font-weight: 900;
   font-size: 0.85rem;
@@ -869,7 +878,7 @@ section {
 }
 
 .dash-icon-btn:hover {
-  border-color: rgba(16, 185, 129, 0.25);
+  border-color: rgba(99, 102, 241, 0.25);
 }
 
 .dash-logout {
@@ -943,13 +952,13 @@ section {
   width: 42px;
   height: 42px;
   border-radius: 14px;
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.25);
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.25);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-weight: 900;
-  color: rgba(167, 243, 208, 0.95);
+  color: rgba(199, 210, 254, 0.95);
 }
 
 .dash-profile-name {
@@ -989,14 +998,14 @@ section {
 }
 
 .dash-form input:focus {
-  border-color: rgba(16, 185, 129, 0.45);
-  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12);
+  border-color: rgba(99, 102, 241, 0.45);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
 }
 
 .dash-form button {
   margin-top: 2px;
-  border: 1px solid rgba(16, 185, 129, 0.25);
-  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  background: rgba(99, 102, 241, 0.12);
   color: rgba(248, 250, 252, 0.95);
   border-radius: 12px;
   padding: 10px 12px;
@@ -1005,7 +1014,7 @@ section {
 }
 
 .dash-form button:hover {
-  background: rgba(16, 185, 129, 0.16);
+  background: rgba(99, 102, 241, 0.16);
 }
 
 .dash-chip {
@@ -1100,9 +1109,9 @@ section {
 }
 
 .pill--ok {
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.22);
-  color: rgba(167, 243, 208, 0.95);
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.22);
+  color: rgba(199, 210, 254, 0.95);
 }
 
 .pill--warn {
@@ -1205,7 +1214,7 @@ section {
   width: 6px;
   height: 6px;
   border-radius: 999px;
-  background: rgba(16, 185, 129, 0.9);
+  background: rgba(99, 102, 241, 0.9);
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
   flex: 0 0 auto;
 }
@@ -1278,7 +1287,7 @@ section {
 }
 
 .dash3-brand svg {
-  color: rgba(167, 243, 208, 0.92);
+  color: rgba(199, 210, 254, 0.92);
 }
 
 .dash3-brand-name {
@@ -1313,7 +1322,7 @@ section {
 
 .dash3-search:focus-within {
   border-color: rgba(99, 102, 241, 0.55);
-  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.10);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.10);
 }
 
 .dash3-nav {
@@ -1345,7 +1354,7 @@ section {
   color: rgba(248, 250, 252, 0.95);
   border-color: rgba(99, 102, 241, 0.45);
   background: rgba(99, 102, 241, 0.12);
-  box-shadow: inset 4px 0 0 rgba(16, 185, 129, 0.85);
+  box-shadow: inset 4px 0 0 rgba(99, 102, 241, 0.85);
 }
 
 .dash3-sidecard {
@@ -1475,8 +1484,8 @@ section {
   justify-content: center;
   margin: 0 auto 12px;
   background: rgba(99, 102, 241, 0.14);
-  border: 1px solid rgba(16, 185, 129, 0.25);
-  color: rgba(167, 243, 208, 0.95);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  color: rgba(199, 210, 254, 0.95);
 }
 
 .dash3-hero-center h2 {
@@ -1513,8 +1522,8 @@ section {
 }
 
 .dash3-hero-search button {
-  border: 1px solid rgba(16, 185, 129, 0.35);
-  background: rgba(16, 185, 129, 0.14);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  background: rgba(99, 102, 241, 0.14);
   color: rgba(248, 250, 252, 0.95);
   border-radius: 14px;
   font-weight: 950;
@@ -1525,7 +1534,7 @@ section {
   margin-top: 14px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(99, 102, 241, 0.14);
-  box-shadow: inset 4px 0 0 rgba(16, 185, 129, 0.65);
+  box-shadow: inset 4px 0 0 rgba(99, 102, 241, 0.65);
   color: rgba(248, 250, 252, 0.95);
   border-radius: 14px;
   padding: 10px 14px;
@@ -1552,7 +1561,7 @@ section {
 
 .dash3-tile:hover {
   border-color: rgba(99, 102, 241, 0.28);
-  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.06);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.06);
 }
 
 .dash3-tile-icon {
@@ -1775,7 +1784,7 @@ section {
   font-weight: 900;
 }
 
-.ev-status.on { background: rgba(16, 185, 129, 0.12); color: #10b981; }
+.ev-status.on { background: rgba(99, 102, 241, 0.12); color: #6366f1; }
 .ev-status.off { background: rgba(148, 163, 184, 0.12); color: #94a3b8; }
 
 .trend-val {

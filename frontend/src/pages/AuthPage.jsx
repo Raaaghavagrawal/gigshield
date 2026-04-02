@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import LiveBackground from "../components/LiveBackground";
 import {
   Briefcase,
   Eye,
@@ -67,8 +68,9 @@ function AuthPage() {
   };
 
   return (
-    <div className="auth-shell auth-shell--split">
-      <aside className="auth-left">
+    <div className="auth-shell auth-shell--split" style={{ position: 'relative', overflow: 'hidden' }}>
+      <LiveBackground />
+      <aside className="auth-left" style={{ position: 'relative', zIndex: 1 }}>
         <div className="auth-left-top">
           <Link to="/" className="auth-left-brand" aria-label="Back to home">
             <span className="auth-left-mark">
@@ -117,7 +119,7 @@ function AuthPage() {
         </div>
       </aside>
 
-      <main className="auth-right">
+      <main className="auth-right" style={{ position: 'relative', zIndex: 1, background: 'transparent' }}>
         <div className="auth-right-header">
           <div className="auth-right-kicker">SECURE ACCESS</div>
           <h2 className="auth-right-title">

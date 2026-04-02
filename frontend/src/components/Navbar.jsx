@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Sparkles, Menu, X, ChevronRight } from 'lucide-react';
+import { Shield, Menu, X, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Navbar = () => {
@@ -16,10 +16,10 @@ const Navbar = () => {
   }, []);
 
   const navLinks = [
-    { name: 'Analytics', href: '#analytics' },
-    { name: 'Community', href: '#rider-showcase' },
-    { name: 'Plans', href: '#pricing' },
-    { name: 'Security', href: '#fraud' },
+    { name: 'Analytics', href: '/#analytics' },
+    { name: 'Community', href: '/#rider-showcase' },
+    { name: 'Plans', href: '/plans', isRoute: true },
+    { name: 'Security', href: '/#fraud' },
   ];
 
   return (
@@ -44,28 +44,30 @@ const Navbar = () => {
         </div>
         
         <div className="landing-nav-links desktop-only">
-          {navLinks.map((link, i) => (
-            <motion.a 
-              key={link.name}
-              href={link.href}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 + i * 0.1, duration: 0.5 }}
-              className="nav-link-item"
-            >
-              {link.name}
-            </motion.a>
-          ))}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.5, duration: 0.5 }}
-          >
-            <Link to="/auth" className="landing-nav-cta premium-btn">
-              <Sparkles size={16} />
-              <span>Analyze My Risk</span>
-            </Link>
-          </motion.div>
+          {navLinks.map((link, i) => {
+            const motionProps = {
+              initial: { opacity: 0, y: -10 },
+              animate: { opacity: 1, y: 0 },
+              transition: { delay: 0.1 + i * 0.1, duration: 0.5 },
+              className: "nav-link-item"
+            };
+            return link.isRoute ? (
+              <motion.div key={link.name} {...motionProps} style={{ display: 'flex' }}>
+                <Link to={link.href} style={{ color: 'inherit', textDecoration: 'none', width: '100%' }}>
+                  {link.name}
+                </Link>
+              </motion.div>
+            ) : (
+              <motion.a 
+                key={link.name}
+                href={link.href}
+                {...motionProps}
+              >
+                {link.name}
+              </motion.a>
+            );
+          })}
+
         </div>
 
         <button 
@@ -87,24 +89,29 @@ const Navbar = () => {
             className="mobile-menu"
           >
             {navLinks.map((link) => (
-              <a 
-                key={link.name} 
-                href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="mobile-nav-link"
-              >
-                {link.name}
-                <ChevronRight size={16} />
-              </a>
+              link.isRoute ? (
+                <Link
+                  key={link.name}
+                  to={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="mobile-nav-link"
+                >
+                  {link.name}
+                  <ChevronRight size={16} />
+                </Link>
+              ) : (
+                <a 
+                  key={link.name} 
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="mobile-nav-link"
+                >
+                  {link.name}
+                  <ChevronRight size={16} />
+                </a>
+              )
             ))}
-            <Link 
-              to="/auth" 
-              className="landing-nav-cta premium-btn mobile-cta"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <Sparkles size={16} />
-              <span>Analyze My Risk</span>
-            </Link>
+
           </motion.div>
         )}
       </AnimatePresence>

@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import AuthPage from "./pages/AuthPage";
 import DashboardPage from "./pages/DashboardPage";
+import PlansPage from "./pages/PlansPage";
 
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem("gigshield_token");
@@ -14,6 +15,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
+      <Route path="/plans" element={<PlansPage />} />
       <Route path="/auth" element={<AuthPage />} />
       <Route
         path="/dashboard"

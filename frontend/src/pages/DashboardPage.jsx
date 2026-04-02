@@ -15,6 +15,8 @@ import {
   TrendingUp,
   Wallet as WalletIcon,
   Wind,
+  Zap,
+  Menu,
 } from "lucide-react";
 import {
   Area,
@@ -55,7 +57,6 @@ function DashboardPage() {
   const [analysis, setAnalysis] = useState(null);
   const [wallet, setWallet] = useState(null);
   const [error, setError] = useState("");
-  const [lastUpdatedAt, setLastUpdatedAt] = useState(null);
 
   const chartData = useMemo(() => {
     if (!analysis) return chartTemplate;
@@ -95,7 +96,6 @@ function DashboardPage() {
   const fetchStats = async () => {
     try {
       const res = await api.get("/stats/dashboard", getAuthHeaders());
-      // The API returns the stats object directly at res.data
       setStats(res.data || {});
     } catch (e) {
       console.error("Fetch Stats Error:", e);
@@ -144,7 +144,6 @@ function DashboardPage() {
       });
       setAnalysis(res.data);
       await loadWallet();
-      setLastUpdatedAt(new Date());
     } catch (err) {
       setError(err?.response?.data?.message || "Risk analysis failed");
     } finally {
@@ -158,475 +157,471 @@ function DashboardPage() {
     navigate("/auth");
   };
 
-  const runQuickAnalyze = async () => {
-    await handleAnalyze();
-    setActiveTab("risk");
-  };
-
   return (
-    <div className="dash3-shell">
-      <aside className="dash3-sidebar">
-        <div className="dash3-brand">
-          <Shield size={18} />
-          <div>
-            <div className="dash3-brand-name">GigShield.AI</div>
-            <div className="dash3-brand-sub">AI-powered analysis</div>
+    <div className="flex min-h-screen bg-[#0B0F19] text-slate-100 font-sans selection:bg-indigo-500/30">
+      {/* Sidebar */}
+      <aside className="w-64 fixed h-full bg-[#0B0F19] border-r border-gray-800 hidden md:flex flex-col z-50 transition-all duration-300">
+        <div className="p-6">
+          <div className="flex items-center gap-3 mb-10 transition-transform duration-300 hover:scale-[1.02]">
+            <div className="bg-indigo-600 p-2.5 rounded-xl shadow-[0_0_20px_rgba(79,70,229,0.2)]">
+              <Shield size={20} className="text-white" />
+            </div>
+            <div>
+              <h1 className="text-lg font-bold tracking-tight text-white leading-none">GigShield.AI</h1>
+              <p className="text-[10px] text-indigo-400 font-bold uppercase tracking-[0.2em] mt-1">Parametric Net</p>
+            </div>
           </div>
+
+          <div className="relative mb-8 group">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 transition-colors group-focus-within:text-indigo-400" size={14} />
+            <input
+              value={sideQuery}
+              onChange={(e) => setSideQuery(e.target.value)}
+              placeholder="Search engine..."
+              className="w-full bg-[#111827] border border-gray-800 rounded-xl py-2.5 pl-9 pr-3 text-xs focus:outline-none focus:border-indigo-600 focus:bg-indigo-950/20 transition-all"
+            />
+          </div>
+
+          <nav className="space-y-1.5">
+            <NavItem
+              active={activeTab === "overview"}
+              onClick={() => setActiveTab("overview")}
+              icon={<TrendingUp size={18} />}
+              label="Overview"
+            />
+            <NavItem
+              active={activeTab === "risk"}
+              onClick={() => setActiveTab("risk")}
+              icon={<Gauge size={18} />}
+              label="AI Risk Matrix"
+            />
+            <NavItem
+              active={activeTab === "wallet"}
+              onClick={() => setActiveTab("wallet")}
+              icon={<WalletIcon size={18} />}
+              label="Payout Ledger"
+            />
+            <NavItem
+              active={activeTab === "news"}
+              onClick={() => setActiveTab("news")}
+              icon={<Newspaper size={18} />}
+              label="Live Updates"
+            />
+          </nav>
         </div>
 
-        <div className="dash3-search">
-          <Search size={16} />
-          <input
-            value={sideQuery}
-            onChange={(e) => setSideQuery(e.target.value)}
-            placeholder="Search city (e.g. Delhi)"
-          />
-        </div>
-
-        <nav className="dash3-nav">
-          <button
-            className={activeTab === "overview" ? "active" : ""}
-            onClick={() => setActiveTab("overview")}
-          >
-            <TrendingUp size={16} /> Overview
-          </button>
-          <button
-            className={activeTab === "risk" ? "active" : ""}
-            onClick={() => setActiveTab("risk")}
-          >
-            <Gauge size={16} /> AI & Risk
-          </button>
-          <button
-            className={activeTab === "wallet" ? "active" : ""}
-            onClick={() => setActiveTab("wallet")}
-          >
-            <WalletIcon size={16} /> Wallet
-          </button>
-          <button
-            className={activeTab === "news" ? "active" : ""}
-            onClick={() => setActiveTab("news")}
-          >
-            <Newspaper size={16} /> Updates
-          </button>
-        </nav>
-
-        <div className="dash3-sidecard">
-          <div className="dash3-sidecard-title">Profile</div>
-          <div className="dash3-sidecard-sub">
-            {user.name || "Gig Worker"} • {user.platform || "Platform User"}
-          </div>
-          <div className="dash3-sidecard-meta">
-            <MapPin size={14} /> {user.city || city}
+        <div className="mt-auto p-6 border-t border-gray-800/60">
+          <div className="bg-gray-900/40 p-4 rounded-2xl border border-gray-800/80 hover:border-gray-700 transition-all duration-300 shadow-sm">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-9 h-9 rounded-xl bg-indigo-500/15 flex items-center justify-center text-indigo-400 font-black border border-indigo-500/20 shadow-inner">
+                {user.name?.[0] || 'G'}
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-bold truncate text-white uppercase tracking-wide">{user.name || "Gig Worker"}</p>
+                <p className="text-[10px] text-gray-500 truncate leading-tight mt-0.5">{user.platform || "Platform Partner"}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 text-[10px] text-gray-400 bg-black/30 px-2 py-1.5 rounded-lg border border-white/5">
+              <MapPin size={10} className="text-indigo-400" /> {user.city || city}
+            </div>
           </div>
         </div>
       </aside>
 
-      <div className="dash3-main">
-        <header className="dash3-topbar">
-          <div className="dash3-topbar-title">
-            {activeTab === "overview"
-              ? "Overview"
-              : activeTab === "risk"
-                ? "AI & Risk"
-                : activeTab === "wallet"
-                  ? "Wallet"
-                  : "Updates"}
-          </div>
-          <div className="dash3-topbar-actions">
-            <span className="dash3-muted">System Live</span>
-            <button
-              className="dash3-iconbtn"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            >
-              <RefreshCcw size={16} />
+      {/* Main Area */}
+      <div className="md:ml-64 flex-1 flex flex-col min-w-0 min-h-screen">
+        {/* Navbar */}
+        <header className="h-16 flex items-center justify-between px-6 border-b border-gray-800 bg-[#0B0F19]/90 backdrop-blur-xl sticky top-0 z-40 transition-all">
+          <div className="flex items-center gap-4">
+            <button className="md:hidden p-2 text-gray-400 hover:text-white transition">
+              <Menu size={20} />
             </button>
-            <button className="dash3-logout" onClick={handleLogout}>
-              <LogOut size={16} />
-              Logout
+            <h2 className="text-xl font-semibold tracking-tight text-white leading-none">
+              {activeTab === "overview" && "Unified Dashboard"}
+              {activeTab === "risk" && "Intelligence Engine"}
+              {activeTab === "wallet" && "Financial Ledger"}
+              {activeTab === "news" && "System Updates"}
+            </h2>
+            <div className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 shadow-lg shadow-indigo-500/5">
+              <div className="w-1 h-1 rounded-full bg-indigo-400 animate-pulse"></div>
+              <span className="text-[9px] text-indigo-400 font-black uppercase tracking-[0.1em]">Signal Online</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+             <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="p-2.5 text-gray-500 hover:text-indigo-400 hover:bg-indigo-500/5 rounded-xl transition-all duration-300"
+            >
+              <RefreshCcw size={18} />
+            </button>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-4 py-2 bg-[#111827] border border-gray-800 hover:border-indigo-600 hover:shadow-lg hover:shadow-indigo-500/10 text-xs font-bold rounded-xl transition-all duration-300 group hover:scale-[1.02]"
+            >
+              <LogOut size={14} className="group-hover:translate-x-0.5 transition-transform" /> Sign Out
             </button>
           </div>
         </header>
 
-        {activeTab === "overview" && (
-          <section className="dash3-content">
-            <div className="dash3-grid-main">
-              <div className="dash3-panel dash3-panel--main">
-                <div className="panel-header">
-                  <div>
-                    <h4 className="panel-label">Income Projection</h4>
-                    <h2 className="panel-value">₹ {((stats && stats.protectedIncome) || 0).toLocaleString()}</h2>
-                    <p className="panel-change success">↑ 2.1% vs last month</p>
-                  </div>
-                  <button className="panel-action">View Report</button>
-                </div>
-                <div className="panel-chart-large">
-                  <ResponsiveContainer width="100%" height={240}>
-                    <BarChart data={barData}>
-                      <Bar dataKey="val" fill="#6366f1" radius={[4, 4, 0, 0]} />
-                      <Tooltip />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-
-              <div className="dash3-panel dash3-panel--side">
-                <div className="panel-header">
-                  <h4 className="panel-label">Risk Distribution</h4>
-                </div>
-                <div className="panel-chart-donut">
-                  <ResponsiveContainer width="100%" height={180}>
-                    <PieChart>
-                      <Pie
-                        data={pieData}
-                        innerRadius={60}
-                        outerRadius={80}
-                        paddingAngle={5}
-                        dataKey="value"
-                      >
-                        {pieData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div className="chart-legend">
-                    {pieData.map((d) => (
-                      <div key={d.name} className="legend-item">
-                        <span className="dot" style={{ background: d.color }} />
-                        <span className="name">{d.name}</span>
-                        <span className="pct">{d.value}%</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="dash3-grid-bottom">
-              <div className="dash3-panel dash3-panel--sm">
-                <h4 className="panel-label">Platform Rating</h4>
-                <div className="rating-bubbles">
-                  <div className="bubble b1"><span>92%</span> Reliability</div>
-                  <div className="bubble b2"><span>85%</span> Speed</div>
-                  <div className="bubble b3"><span>85%</span> UI</div>
-                </div>
-              </div>
-
-              <div className="dash3-panel dash3-panel--md">
-                <h4 className="panel-label">Recent Risk Events</h4>
-                <div className="event-list-mini">
-                  {[
-                    { name: "Heavy Rainfall", city: "Mumbai", triggered: true },
-                    { name: "Critical AQI", city: "Delhi", triggered: true },
-                    { name: "Moderate Heat", city: "Chennai", triggered: false },
-                  ].map((ev, i) => (
-                    <div key={i} className="mini-event-row">
-                      <div className="ev-icon">{ev.triggered ? "⚡" : "🧊"}</div>
-                      <div className="ev-info">
-                        <div className="ev-name">{ev.name}</div>
-                        <div className="ev-city">{ev.city}</div>
-                      </div>
-                      <div className={`ev-status ${ev.triggered ? 'on' : 'off'}`}>
-                        {ev.triggered ? 'Payout' : 'Watch'}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="dash3-panel dash3-panel--md">
-                <div className="panel-header">
-                  <h4 className="panel-label">Payout Trends</h4>
-                  <div className="trend-val">₹ {((stats && stats.totalPayouts) || 0).toLocaleString()}</div>
-                </div>
-                <ResponsiveContainer width="100%" height={120}>
-                  <LineChart data={lineData}>
-                    <Line type="monotone" dataKey="val" stroke="#8b5cf6" strokeWidth={3} dot={false} />
-                    <Tooltip />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {activeTab === "risk" && (
-          <section className="dash3-content">
-            <section className="dash-layout">
-              <aside className="dash-col dash-col--left">
-                <div className="panel panel--tight">
-                  <div className="panel-head">
-                    <div className="panel-title">Risk Scanner</div>
-                    <div className="panel-subtitle">Configure the analysis target</div>
-                  </div>
-
-                  <div className="dash-form">
-                    <label>City</label>
-                    <input
-                      value={city}
-                      onChange={(e) => setCity(e.target.value)}
-                      placeholder="Delhi"
-                    />
-                    <label>Weekly income (INR)</label>
-                    <input
-                      type="number"
-                      value={income}
-                      onChange={(e) => setIncome(e.target.value)}
-                    />
-                    <button onClick={handleAnalyze} disabled={loading}>
-                      {loading ? "Analyzing..." : "Run analysis"}
-                    </button>
-                    {error && <p className="auth-error">{error}</p>}
-                  </div>
-                </div>
-
-                <div className="panel panel--tight">
-                  <div className="panel-head">
-                    <div className="panel-title">Quick signals</div>
-                    <div className="panel-subtitle">What matters right now</div>
-                  </div>
-                  <div className="dash-signal-list">
-                    <div className="dash-signal">
-                      <span className="dash-signal-k">Risk</span>
-                      <span className="dash-signal-v">
-                        {analysis?.risk?.risk_level || "—"}
-                      </span>
-                    </div>
-                    <div className="dash-signal">
-                      <span className="dash-signal-k">Score</span>
-                      <span className="dash-signal-v">
-                        {analysis?.risk?.risk_score ?? "—"}
-                      </span>
-                    </div>
-                    <div className="dash-signal">
-                      <span className="dash-signal-k">Auto payout</span>
-                      <span className="dash-signal-v">
-                        {analysis?.risk?.auto_payout ? "Enabled" : "—"}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </aside>
-
-              <main className="dash-col dash-col--center">
-                <div className="panel">
-                  <div className="panel-head panel-head--row">
+        {/* Content */}
+        <main className="p-6 space-y-6 flex-1 bg-[#0B0F19]">
+          {activeTab === "overview" && (
+            <>
+              {/* Top Section - 2:1 */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2 bg-[#111827] rounded-xl p-5 border border-gray-800 shadow-sm hover:border-gray-700 hover:shadow-xl transition-all duration-300 group h-full">
+                  <div className="flex justify-between items-start mb-8">
                     <div>
-                      <div className="panel-title">
-                        <LineIcon size={16} /> Intraday risk movement
-                      </div>
-                      <div className="panel-subtitle">
-                        Synthetic terminal chart (demo)
-                      </div>
+                      <p className="text-sm text-gray-400 font-medium tracking-wide">Net Protected Forecast</p>
+                      <h3 className="text-2xl font-bold mt-1 text-white tracking-tighter">₹ {((stats && stats.protectedIncome) || 0).toLocaleString()}</h3>
+                      <p className="flex items-center gap-1.5 text-[11px] text-indigo-400 font-black mt-2 bg-indigo-500/10 w-fit px-2 py-0.5 rounded border border-indigo-500/20">
+                        <TrendingUp size={10} /> +2.1% PERIOD GAIN
+                      </p>
                     </div>
-                    <div className="dash-chip">
-                      <TrendingUp size={14} /> Signal:{" "}
-                      {analysis?.risk?.risk_level || "—"}
-                    </div>
+                    <button className="px-4 py-1.5 bg-gray-900 border border-gray-800 rounded-lg text-[10px] font-black text-gray-300 hover:text-white hover:bg-indigo-600/20 hover:border-indigo-600 transition-all uppercase tracking-widest">
+                      Analytics Pack
+                    </button>
                   </div>
-
-                  <ResponsiveContainer width="100%" height={300}>
-                    <AreaChart data={chartData}>
-                      <defs>
-                        <linearGradient id="riskFill" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#10b981" stopOpacity={0.35} />
-                          <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid
-                        stroke="rgba(148,163,184,0.18)"
-                        strokeDasharray="3 3"
-                      />
-                      <XAxis dataKey="t" stroke="#94a3b8" />
-                      <YAxis stroke="#94a3b8" />
-                      <Tooltip />
-                      <Area
-                        type="monotone"
-                        dataKey="risk"
-                        stroke="#10b981"
-                        fill="url(#riskFill)"
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-
-                <div className="dash-metrics">
-                  <div className="panel panel--metric">
-                    <div className="metric-head">
-                      <Activity size={16} /> Risk
-                    </div>
-                    <div className="metric-value">
-                      {analysis?.risk?.risk_level || "—"}
-                    </div>
-                    <div className="metric-sub">
-                      Score: {analysis?.risk?.risk_score ?? "--"}
-                    </div>
-                  </div>
-                  <div className="panel panel--metric">
-                    <div className="metric-head">
-                      <CloudRain size={16} /> Rainfall
-                    </div>
-                    <div className="metric-value">
-                      {analysis?.weather?.rainfall ?? "--"} mm
-                    </div>
-                    <div className="metric-sub">
-                      {analysis?.weather?.condition || "Awaiting data"}
-                    </div>
-                  </div>
-                  <div className="panel panel--metric">
-                    <div className="metric-head">
-                      <Wind size={16} /> AQI
-                    </div>
-                    <div className="metric-value">
-                      {analysis?.weather?.aqi ?? "--"}
-                    </div>
-                    <div className="metric-sub">
-                      {analysis?.fraud?.fraud_risk
-                        ? `Fraud risk: ${analysis.fraud.fraud_risk}`
-                        : "—"}
-                    </div>
-                  </div>
-                  <div className="panel panel--metric">
-                    <div className="metric-head">
-                      <IndianRupee size={16} /> Predicted payout
-                    </div>
-                    <div className="metric-value">
-                      ₹{analysis?.risk?.suggested_payout?.toLocaleString?.() ?? "--"}
-                    </div>
-                    <div className="metric-sub">
-                      Wallet: ₹{wallet?.wallet_balance?.toLocaleString?.() ?? "0"}
-                    </div>
+                  <div className="h-64 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={barData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#111827" vertical={false} />
+                        <XAxis dataKey="name" stroke="#374151" fontSize={10} axisLine={false} tickLine={false} />
+                        <YAxis stroke="#374151" fontSize={10} axisLine={false} tickLine={false} />
+                        <Tooltip
+                          contentStyle={{ backgroundColor: '#111827', border: '1px solid #1f2937', borderRadius: '12px', boxShadow: '0 10px 30px -10px rgba(0,0,0,0.5)' }}
+                          itemStyle={{ fontSize: '12px', fontWeight: 'bold' }}
+                        />
+                        <Bar dataKey="val" fill="#6366f1" radius={[6, 6, 0, 0]} barSize={24} />
+                      </BarChart>
+                    </ResponsiveContainer>
                   </div>
                 </div>
 
-                <div className="panel">
-                  <div className="panel-head">
-                    <div className="panel-title">Explainable AI insights</div>
-                    <div className="panel-subtitle">
-                      Human-readable summary of why this risk score/payout was produced
+                <div className="bg-[#111827] rounded-xl p-5 border border-gray-800 shadow-sm hover:border-gray-700 transition-all duration-300 h-full">
+                  <h4 className="text-sm font-semibold mb-8 tracking-wide">Risk Allocation</h4>
+                  <div className="h-48 w-full relative">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={pieData}
+                          innerRadius={68}
+                          outerRadius={80}
+                          paddingAngle={10}
+                          dataKey="value"
+                          stroke="none"
+                        >
+                          {pieData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip
+                          contentStyle={{ backgroundColor: '#111827', border: '1px solid #1f2937', borderRadius: '12px' }}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
+                       <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">Global</p>
+                       <p className="text-lg font-black text-white">NORM</p>
                     </div>
                   </div>
-                  <div className="dash-insights">
-                    {explainableInsights.map((line, idx) => (
-                      <div className="dash-insight" key={idx}>
-                        <span className="dash-insight-dot" aria-hidden="true" />
-                        <span>{line}</span>
+                  <div className="mt-8 space-y-4">
+                    {pieData.map((d) => (
+                      <div key={d.name} className="flex items-center justify-between group">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-2.5 h-2.5 rounded-full shadow-lg" style={{ backgroundColor: d.color }}></div>
+                          <span className="text-xs text-gray-400 font-medium group-hover:text-gray-200 transition-colors uppercase tracking-wider">{d.name}</span>
+                        </div>
+                        <span className="text-xs font-black text-white px-2 py-0.5 bg-gray-900 rounded">{d.value}%</span>
                       </div>
                     ))}
-                    {!analysis && (
-                      <div className="dash-empty">
-                        Run an analysis to generate explainable insights.
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Row - 1:1:1:1 style */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <Card title="Factor Assessment">
+                  <div className="space-y-4 mt-6">
+                    <RatingPill label="Reliability Index" value="92" color="indigo" />
+                    <RatingPill label="Throughput" value="85" color="amber" />
+                    <RatingPill label="User Logic" value="85" color="cyan" />
+                  </div>
+                </Card>
+
+                <div className="bg-[#111827] rounded-xl p-5 border border-gray-800 flex flex-col h-full hover:border-gray-700 transition-all duration-300">
+                  <h4 className="text-sm font-semibold mb-6 tracking-wide">Signal Log</h4>
+                  <div className="space-y-3.5 flex-1 overflow-y-auto pr-1">
+                    {[
+                      { name: "Heavy Rainfall", city: "Mumbai", triggered: true, time: "2h ago" },
+                      { name: "AQI Critical", city: "Delhi", triggered: true, time: "5h ago" },
+                      { name: "Heat Intensity", city: "Chennai", triggered: false, time: "1d ago" },
+                    ].map((ev, i) => (
+                      <div key={i} className="flex items-center gap-4 p-3.5 rounded-xl bg-gray-950/40 border border-gray-800/40 hover:bg-gray-900/40 transition-colors">
+                        <div className={`p-2.5 rounded-xl ${ev.triggered ? 'text-indigo-400 bg-indigo-500/10 border border-indigo-500/15 shadow-[0_0_15px_rgba(79,70,229,0.1)]' : 'text-gray-500 bg-gray-500/5'}`}>
+                          {ev.triggered ? <Zap size={14} /> : <Activity size={14} />}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-bold truncate text-white">{ev.name}</p>
+                          <p className="text-[10px] text-gray-500 mt-0.5">{ev.city} • {ev.time}</p>
+                        </div>
+                        <span className={`text-[9px] font-black px-2.5 py-1 rounded-lg uppercase tracking-widest ${ev.triggered ? 'text-emerald-400 bg-emerald-500/10' : 'text-gray-500 bg-gray-500/10'}`}>
+                          {ev.triggered ? 'CREDIT' : 'WATCH'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <Card title="Financial Momentum">
+                  <div className="mt-4">
+                    <p className="text-3xl font-bold tracking-tight text-white leading-none">₹ {((stats && stats.totalPayouts) || 0).toLocaleString()}</p>
+                    <p className="text-[10px] font-bold text-gray-500 mt-2 uppercase tracking-widest">Total Disbursed</p>
+                    <div className="h-24 w-full mt-6">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={lineData}>
+                          <defs>
+                            <linearGradient id="glowPurple" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.2} />
+                              <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
+                            </linearGradient>
+                          </defs>
+                          <Area type="monotone" dataKey="val" stroke="#8b5cf6" strokeWidth={3} fill="url(#glowPurple)" />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+            </>
+          )}
+
+          {activeTab === "risk" && (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="space-y-6">
+                <div className="bg-[#111827] rounded-xl p-5 border border-gray-800 shadow-sm hover:border-gray-700 transition">
+                  <h4 className="text-sm font-semibold mb-6">Execution Config</h4>
+                  <div className="space-y-5">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em]">Deployment City</label>
+                      <input
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
+                        className="w-full bg-[#0B0F19] border border-gray-800 rounded-xl p-3.5 text-xs focus:outline-none focus:border-indigo-600 focus:bg-indigo-950/10 transition-all font-medium text-white"
+                        placeholder="e.g. Mumbai"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] text-gray-500 font-black uppercase tracking-[0.2em]">Target Income (₹/wk)</label>
+                      <input
+                        type="number"
+                        value={income}
+                        onChange={(e) => setIncome(e.target.value)}
+                        className="w-full bg-[#0B0F19] border border-gray-800 rounded-xl p-3.5 text-xs focus:outline-none focus:border-indigo-600 focus:bg-indigo-950/10 transition-all font-medium text-white"
+                      />
+                    </div>
+                    <button
+                      onClick={handleAnalyze}
+                      disabled={loading}
+                      className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-4 rounded-xl text-xs transition-all hover:scale-[1.02] active:scale-100 shadow-xl shadow-indigo-600/20 disabled:opacity-50 uppercase tracking-widest mt-2"
+                    >
+                      {loading ? "Crunching Env Logic..." : "Compute Risk Vectors"}
+                    </button>
+                    {error && <p className="text-[11px] text-red-500 bg-red-500/5 p-3 rounded-lg border border-red-500/10 font-bold">{error}</p>}
+                  </div>
+                </div>
+
+                <div className="bg-[#111827] rounded-xl p-5 border border-gray-800 shadow-sm">
+                  <h4 className="text-sm font-semibold mb-6">Real-Time Core</h4>
+                  <div className="space-y-3">
+                    <SignalRow label="Aggregated Risk" value={analysis?.risk?.risk_level || "—"} />
+                    <SignalRow label="Vector Score" value={analysis?.risk?.risk_score ?? "—"} />
+                    <SignalRow label="Auto-Trigger" value={analysis?.risk?.auto_payout ? "ENABLED" : "NULL"} />
+                  </div>
+                </div>
+              </div>
+
+              <div className="lg:col-span-2 space-y-6">
+                <div className="bg-[#111827] rounded-xl p-5 border border-gray-800 shadow-sm hover:border-gray-700 transition">
+                   <div className="flex justify-between items-center mb-8">
+                    <div>
+                      <h4 className="text-sm font-semibold tracking-wide">Environmental Risk Mapping</h4>
+                      <p className="text-[10px] text-gray-500 mt-1 uppercase tracking-wider">Dynamic Synthetic Signals • High Fidelity</p>
+                    </div>
+                    {analysis && (
+                       <div className="px-3 py-1 bg-indigo-600/10 text-indigo-400 border border-indigo-600/20 rounded-lg text-[10px] font-black uppercase tracking-widest shadow-lg shadow-indigo-600/5">
+                        {analysis.risk.risk_level} VECTOR
                       </div>
                     )}
                   </div>
-                </div>
-              </main>
+                  <div className="h-72 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={chartData}>
+                        <defs>
+                          <linearGradient id="riskCyan" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.15} />
+                            <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <XAxis dataKey="t" stroke="#374151" fontSize={10} axisLine={false} tickLine={false} />
+                        <YAxis stroke="#374151" fontSize={10} axisLine={false} tickLine={false} />
+                        <Tooltip 
+                          contentStyle={{ backgroundColor: '#111827', border: '1px solid #1f2937', borderRadius: '12px' }}
+                          cursor={{ stroke: '#6366f1', strokeWidth: 1 }}
+                        />
+                        <Area type="monotone" dataKey="risk" stroke="#10b981" strokeWidth={3} fill="url(#riskCyan)" />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
 
-              <aside className="dash-col dash-col--right">
-                <div className="panel panel--tight">
-                  <div className="panel-head">
-                    <div className="panel-title">Latest snapshot</div>
-                    <div className="panel-subtitle">From the last analysis run</div>
-                  </div>
-                  <div className="dash-snapshot">
-                    <div className="dash-snap-row">
-                      <span>City</span>
-                      <span>{analysis?.city || city}</span>
-                    </div>
-                    <div className="dash-snap-row">
-                      <span>Trigger</span>
-                      <span>{analysis?.risk?.trigger_met ? "Triggered" : "—"}</span>
-                    </div>
-                    <div className="dash-snap-row">
-                      <span>Payout %</span>
-                      <span>{analysis?.risk?.payout_percentage ?? "—"}%</span>
-                    </div>
-                    <div className="dash-snap-row">
-                      <span>Condition</span>
-                      <span>{analysis?.weather?.condition || "—"}</span>
-                    </div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8 pt-8 border-t border-gray-800/80">
+                    <MetricMini label="Rainfall" value={`${analysis?.weather?.rainfall ?? "--"}mm`} sub={analysis?.weather?.condition || "Waiting..."} icon={<CloudRain size={12} className="text-indigo-400" />} />
+                    <MetricMini label="AQI INDEX" value={analysis?.weather?.aqi ?? "--"} sub="Atmo Pressure" icon={<Wind size={12} className="text-indigo-400" />} />
+                    <MetricMini label="Threat" value={analysis?.risk?.risk_level || "--"} sub={`VAL: ${analysis?.risk?.risk_score ?? "--"}`} icon={<Activity size={12} className="text-indigo-400" />} />
+                    <MetricMini label="Net Credit" value={`₹${analysis?.risk?.suggested_payout?.toLocaleString?.() ?? "--"}`} sub="Auto-Calculated" icon={<IndianRupee size={12} className="text-indigo-400" />} />
                   </div>
                 </div>
 
-                <div className="panel panel--tight">
-                  <div className="panel-head">
-                    <div className="panel-title">Wallet</div>
-                    <div className="panel-subtitle">Total credited amount</div>
+                <div className="bg-[#111827] rounded-xl p-5 border border-gray-800 shadow-sm">
+                  <h4 className="text-sm font-semibold mb-6 tracking-wide">Explainable AI Core</h4>
+                  <div className="space-y-3">
+                    {explainableInsights.map((line, idx) => (
+                      <div className="flex gap-4 p-4 bg-gray-950/40 rounded-xl border border-gray-800/40 text-[11px] leading-relaxed text-gray-400 hover:text-gray-200 transition-colors duration-300" key={idx}>
+                        <div className="w-2 h-2 rounded-full bg-indigo-500 mt-1 shrink-0 shadow-[0_0_10px_rgba(79,70,229,0.5)]"></div>
+                        <span>{line}</span>
+                      </div>
+                    ))}
+                    {!analysis && <p className="text-xs text-gray-500 italic p-12 text-center border-2 border-dashed border-gray-800/50 rounded-2xl">Awaiting environment data crunching...</p>}
                   </div>
-                  <div className="dash-wallet">
-                    <div className="dash-wallet-amt">
-                      ₹{wallet?.wallet_balance?.toLocaleString?.() ?? "0"}
-                    </div>
-                    <div className="dash-wallet-sub">
-                      {wallet?.payouts?.length || 0} payout entries
-                    </div>
-                  </div>
-                </div>
-              </aside>
-            </section>
-          </section>
-        )}
-
-        {activeTab === "wallet" && (
-          <section className="dash3-content">
-            <div className="panel">
-              <div className="panel-head panel-head--row">
-                <div>
-                  <div className="panel-title">
-                    <WalletIcon size={16} /> Wallet & payouts
-                  </div>
-                  <div className="panel-subtitle">Ledger of credited payouts</div>
-                </div>
-                <div className="dash-chip">
-                  Balance: ₹{wallet?.wallet_balance?.toLocaleString?.() ?? "0"}
                 </div>
               </div>
+            </div>
+          )}
 
-              <div className="dash-table">
-                <div className="dash-table-head">
-                  <span>Date</span>
-                  <span>City</span>
-                  <span>Status</span>
-                  <span className="right">Amount</span>
+          {activeTab === "wallet" && (
+            <div className="bg-[#111827] rounded-xl border border-gray-800 overflow-hidden shadow-xl hover:border-gray-700 transition-all duration-300">
+               <div className="p-8 border-b border-gray-800 flex flex-wrap gap-6 justify-between items-center">
+                <div>
+                  <h4 className="text-lg font-bold text-white tracking-tight">Disbursement Ledger</h4>
+                  <p className="text-[11px] text-gray-400 mt-1 font-medium uppercase tracking-[0.1em]">Verified environmental payouts</p>
                 </div>
-                {(wallet?.payouts || []).map((p) => (
-                  <div className="dash-table-row" key={p.id}>
-                    <span>{String(p.event_date || "").slice(0, 10) || "—"}</span>
-                    <span>{p.city || "—"}</span>
-                    <span className={p.flagged ? "pill pill--warn" : "pill pill--ok"}>
-                      {p.flagged ? "Flagged" : "Credited"}
-                    </span>
-                    <span className="right">₹{Number(p.amount).toFixed(2)}</span>
-                  </div>
-                ))}
+                <div className="bg-indigo-500/10 text-indigo-400 px-6 py-3 rounded-2xl border border-indigo-500/20 flex flex-col items-end shadow-sm">
+                  <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Liquid Balance</span>
+                  <span className="text-2xl font-black text-white mt-1">₹{wallet?.wallet_balance?.toLocaleString?.() ?? "0"}</span>
+                </div>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="bg-[#0B0F19]/60 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">
+                      <th className="px-8 py-5">Event Stamp</th>
+                      <th className="px-8 py-5">Location</th>
+                      <th className="px-8 py-5">Audit Status</th>
+                      <th className="px-8 py-5 text-right">Credit Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-800/40 font-medium">
+                    {(wallet?.payouts || []).map((p) => (
+                      <tr key={p.id} className="text-[12px] hover:bg-indigo-600/[0.03] transition-all group">
+                        <td className="px-8 py-5 font-bold text-gray-300 group-hover:text-indigo-400">{String(p.event_date || "").slice(0, 10)}</td>
+                        <td className="px-8 py-5 text-gray-500 group-hover:text-gray-300">{p.city}</td>
+                        <td className="px-8 py-5">
+                          <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${p.flagged ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' : 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'}`}>
+                            {p.flagged ? "Flagged" : "Settled"}
+                          </span>
+                        </td>
+                        <td className="px-8 py-5 text-right font-black text-white text-sm">₹{Number(p.amount).toFixed(2)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
                 {(!wallet?.payouts || wallet.payouts.length === 0) && (
-                  <div className="dash-empty">
-                    No payouts yet. Trigger an event to see credits here.
-                  </div>
+                  <div className="py-24 text-center text-gray-500 text-sm font-medium italic opacity-60">No financial events detected in this cycle.</div>
                 )}
               </div>
             </div>
-          </section>
-        )}
+          )}
 
-        {activeTab === "news" && (
-          <section className="dash3-content">
-            <div className="panel">
-              <div className="panel-head">
-                <div className="panel-title">System updates</div>
-                <div className="panel-subtitle">
-                  External Data Engine runs hourly. Use events to trigger payouts.
-                </div>
+          {activeTab === "news" && (
+            <div className="bg-[#111827] rounded-3xl p-12 border border-gray-800 text-center max-w-2xl mx-auto mt-16 group hover:border-indigo-600/30 transition-all duration-500">
+              <div className="w-16 h-16 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-400 mx-auto mb-8 border border-indigo-500/20 shadow-2xl shadow-indigo-500/20 group-hover:scale-110 transition-transform duration-500">
+                <Newspaper size={28} />
               </div>
-              <div className="dash-empty">
-                Tip: Call <code>/api/events/fetch-environment/:city</code> to store
-                real data, then run payouts from backend if triggered.
+              <h4 className="text-2xl font-bold mb-3 text-white tracking-tight">Node Updates</h4>
+              <p className="text-sm text-gray-400 mb-10 leading-relaxed font-medium">
+                Environmental extraction clusters are running with 99.9% uptime. Regional Swiggy/Zomato partner nodes are currently receiving data in Mumbai, Delhi, and Bangalore zones.
+              </p>
+              <div className="bg-gray-950/60 rounded-2xl p-5 text-[11px] text-gray-500 border border-gray-800/80 text-left hover:border-indigo-600/40 transition-colors shadow-inner">
+                <span className="text-indigo-400 font-black mr-2 uppercase tracking-widest text-xs">Node Intel:</span> 
+                Trigger simulation via the Risk Matrix tab is recommended for audit trials.
               </div>
             </div>
-          </section>
-        )}
+          )}
+        </main>
       </div>
+    </div>
+  );
+}
+
+// UI Pieces
+function NavItem({ active, onClick, icon, label }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition-all duration-200 transform active:scale-[0.98] ${
+        active
+          ? "bg-indigo-600/20 text-indigo-400 border border-indigo-600/30 shadow-lg shadow-indigo-600/5 ring-1 ring-indigo-600/20"
+          : "text-gray-500 hover:text-indigo-300 hover:bg-indigo-600/5 border border-transparent"
+      }`}
+    >
+      <div className={`${active ? 'text-indigo-400' : 'text-gray-500 group-hover:text-indigo-400'} transition-colors`}>{icon}</div>
+      <span className="tracking-wide uppercase text-[10px]">{label}</span>
+    </button>
+  );
+}
+
+function Card({ title, children }) {
+  return (
+    <div className="bg-[#111827] rounded-xl p-5 border border-gray-800 shadow-sm hover:border-gray-700 hover:shadow-xl transition-all duration-300 h-full flex flex-col group overflow-hidden relative">
+      <div className="absolute top-0 left-0 w-1 h-0 bg-indigo-600 group-hover:h-full transition-all duration-300"></div>
+      <h4 className="text-sm font-semibold text-gray-400 mb-6 group-hover:text-white transition-colors tracking-wide uppercase text-[10px]">{title}</h4>
+      <div className="flex-1">{children}</div>
+    </div>
+  );
+}
+
+function RatingPill({ label, value, color }) {
+  const colors = {
+    indigo: "bg-indigo-500/10 text-indigo-400 border-indigo-600/20 hover:bg-indigo-600/20",
+    amber: "bg-amber-500/10 text-amber-500 border-amber-600/20 hover:bg-amber-600/20",
+    cyan: "bg-cyan-500/10 text-cyan-500 border-cyan-600/20 hover:bg-cyan-600/20",
+  };
+  return (
+    <div className={`flex items-center justify-between p-4 rounded-xl border transition-all duration-300 ${colors[color]}`}>
+      <span className="text-[10px] font-black uppercase tracking-widest opacity-80">{label}</span>
+      <span className="text-2xl font-black">{value}</span>
+    </div>
+  );
+}
+
+function SignalRow({ label, value }) {
+  return (
+    <div className="flex items-center justify-between p-4 rounded-xl bg-gray-950/40 border border-gray-800/60 hover:border-gray-700 transition-colors group">
+      <span className="text-[10px] text-gray-500 font-black uppercase tracking-widest group-hover:text-gray-400 transition-colors">{label}</span>
+      <span className="text-xs font-black text-gray-200 group-hover:text-white transition-colors">{value}</span>
+    </div>
+  );
+}
+
+function MetricMini({ label, value, sub, icon }) {
+  return (
+    <div className="space-y-1.5 group">
+      <div className="flex items-center gap-2 text-[9px] text-gray-500 font-black uppercase tracking-widest group-hover:text-indigo-400 transition-colors">
+        {icon} {label}
+      </div>
+      <p className="text-2xl font-black text-white tracking-tighter transition-transform group-hover:translate-x-1 duration-300">{value}</p>
+      <p className="text-[10px] text-gray-500 font-medium leading-none truncate opacity-80">{sub}</p>
     </div>
   );
 }
