@@ -34,6 +34,10 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(morgan("dev"));
 
+app.get("/", (req, res) => {
+  res.send("API running");
+});
+
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
@@ -66,6 +70,7 @@ app.use((err, _req, res, _next) => {
 });
 
 const PORT = Number(process.env.PORT || 5001);
+console.log("ENV PORT:", process.env.PORT);
 
 async function startServer() {
   try {
