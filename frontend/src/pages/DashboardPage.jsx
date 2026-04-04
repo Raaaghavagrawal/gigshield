@@ -223,21 +223,45 @@ function DashboardPage() {
   const fetchStats = async () => {
     try {
       const res = await api.get("/api/stats/dashboard", { headers: getAuthHeaders() });
-      // Normalise keys from backend (snake_case) to camelCase for convenience
       const d = res.data || {};
+      
+      // Update global system metrics
       setStats({
-        totalUsers: d.total_users || d.totalUsers || 0,
-        totalPayouts: d.total_payouts || d.totalPayouts || 0,
-        activeUsers: d.active_users || d.activeUsers || 0,
-        protectedIncome: d.protected_income || d.protectedIncome || 0,
+        totalUsers: d.system_stats?.total_users || 0,
+        totalPayouts: d.system_stats?.total_payouts || 0,
+        activeUsers: d.system_stats?.active_users || 0,
+        protectedIncome: d.system_stats?.protected_income || 0,
       });
+
+      // Update personalized AI environment metrics
+      if (d.environment) {
+        setEnvSnapshot({
+          ...d.environment,
+          risk_score: d.ai_metrics?.risk_score,
+          risk_level: d.ai_metrics?.risk_level,
+          confidence: d.ai_metrics?.confidence,
+          explanation: d.ai_metrics?.explanation
+        });
+      }
+
+      // Update wallet balance from the unified response
+      if (d.user) {
+        setWallet(prev => ({
+          ...prev,
+          wallet_balance: d.user.wallet_balance
+        }));
+      }
+
     } catch (e) {
-      console.error("Fetch Stats Error:", e);
+      console.error("Unified Statistics Fetch Error:", e);
     }
   };
 
   useEffect(() => {
     fetchStats();
+    // Refresh unified stats every 10 seconds
+    const interval = setInterval(fetchStats, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   const fetchEnvData = async (targetCity) => {
