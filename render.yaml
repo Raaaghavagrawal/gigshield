@@ -2,7 +2,7 @@ services:
   # 1. AI Service (Python/FastAPI)
   - type: web
     name: ai-service
-    env: python
+    runtime: python
     buildCommand: |
       cd ai_service
       pip install -r requirements.txt
@@ -17,7 +17,7 @@ services:
   # 2. Node.js Backend API
   - type: web
     name: backend
-    env: node
+    runtime: node
     buildCommand: |
       cd backend
       npm install
@@ -39,7 +39,7 @@ services:
           property: host
       - key: JWT_SECRET
         generateValue: true
-      # Placeholder variables for DB. Update these in Render dashboard
+      # Database: Paste your MySQL connection details here in the Render Dashboard
       - key: DB_HOST
         sync: false
       - key: DB_PORT
@@ -54,7 +54,7 @@ services:
   # 3. Frontend (Vite/Static Site)
   - type: web
     name: frontend
-    env: static
+    runtime: static
     buildCommand: |
       cd frontend
       npm install
