@@ -28,7 +28,23 @@ async function ensureColumn(tableName, columnName, columnDefinitionSql) {
 }
 
 async function syncPayoutTableSchema() {
-  // Backwards-compatible: keep existing flag_reason, add reason + status
+  // 1. Ensure the table exists
+  await pool.execute(`
+    CREATE TABLE IF NOT EXISTS payouts (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      user_id INT NOT NULL,
+      policy_id INT NOT NULL,
+      event_id INT NOT NULL,
+      amount DECIMAL(10,2) NOT NULL,
+      flagged BOOLEAN DEFAULT FALSE,
+      flag_reason VARCHAR(255) NULL,
+      status ENUM('credited','under_review') NOT NULL DEFAULT 'credited',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE KEY uq_user_event (user_id, event_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `);
+
+  // 2. Incremental column updates
   await ensureColumn("payouts", "reason", "VARCHAR(255) NULL");
   await ensureColumn(
     "payouts",

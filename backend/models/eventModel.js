@@ -30,6 +30,18 @@ async function ensureColumn(tableName, columnName, columnDefinitionSql) {
 }
 
 async function syncEventTableSchema() {
+  await pool.execute(`
+    CREATE TABLE IF NOT EXISTS events (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      city VARCHAR(120) NOT NULL,
+      rainfall DECIMAL(8,2) NOT NULL,
+      aqi DECIMAL(8,2) NOT NULL,
+      event_date DATE NOT NULL,
+      triggered BOOLEAN DEFAULT FALSE,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `);
+
   await ensureColumn("events", "temperature", "DECIMAL(8,2) NOT NULL DEFAULT 0");
   await ensureColumn("events", "pollution_level", "VARCHAR(50) NULL");
 }
