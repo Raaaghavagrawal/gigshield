@@ -33,7 +33,25 @@ async function hasActivePolicy(userId) {
   return Boolean(rows.length);
 }
 
+async function syncPolicyTableSchema() {
+  await pool.execute(`
+    CREATE TABLE IF NOT EXISTS policies (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      user_id INT NOT NULL,
+      premium DECIMAL(10,2) NOT NULL,
+      coverage_percentage DECIMAL(5,2) NOT NULL,
+      start_date DATE NOT NULL,
+      status ENUM('active', 'inactive', 'cancelled') DEFAULT 'active',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      CONSTRAINT fk_policy_user_ref
+        FOREIGN KEY (user_id) REFERENCES users(id)
+        ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `);
+}
+
 module.exports = {
+  syncPolicyTableSchema,
   createPolicy,
   getPoliciesByUserId,
   hasActivePolicy,

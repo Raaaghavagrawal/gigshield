@@ -2,11 +2,12 @@ require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
 const { testDbConnection } = require("./config/db");
+const { syncUserTableSchema } = require("./models/userModel");
 const { syncEventTableSchema } = require("./models/eventModel");
+const { syncPolicyTableSchema } = require("./models/policyModel");
 const { syncPayoutTableSchema } = require("./models/payoutModel");
 const { syncWalletTableSchema } = require("./models/walletModel");
 const { syncSystemLogTableSchema } = require("./models/systemLogModel");
-const { syncUserTableSchema } = require("./models/userModel");
 const { startCronJobs } = require("./jobs/cronJob");
 
 const authRoutes = require("./routes/authRoutes");
@@ -87,11 +88,12 @@ const PORT = Number(process.env.PORT || 5001);
 async function startServer() {
   try {
     await testDbConnection();
-    await syncEventTableSchema();
-    await syncPayoutTableSchema();
-    await syncWalletTableSchema();
-    await syncSystemLogTableSchema();
     await syncUserTableSchema();
+    await syncEventTableSchema();
+    await syncPolicyTableSchema();
+    await syncWalletTableSchema();
+    await syncPayoutTableSchema();
+    await syncSystemLogTableSchema();
     app.listen(PORT, () => {
       console.log(
         `[gigshield-api] Express listening on http://localhost:${PORT} (PORT=${PORT})`

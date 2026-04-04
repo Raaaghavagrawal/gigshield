@@ -28,6 +28,20 @@ async function ensureColumn(tableName, columnName, columnDefinitionSql) {
 }
 
 async function syncUserTableSchema() {
+  await pool.execute(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(120) NOT NULL,
+      email VARCHAR(190) NOT NULL UNIQUE,
+      password VARCHAR(255) NOT NULL,
+      city VARCHAR(120) NOT NULL,
+      platform VARCHAR(120) NOT NULL,
+      weekly_income DECIMAL(10,2) NOT NULL,
+      last_active_at TIMESTAMP NULL DEFAULT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `);
+
   await ensureColumn("users", "last_active_at", "TIMESTAMP NULL DEFAULT NULL");
   await ensureColumn("users", "avg_daily_deliveries", "INT DEFAULT 20");
   await ensureColumn("users", "earnings_per_delivery", "INT DEFAULT 40");
