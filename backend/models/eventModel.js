@@ -62,6 +62,20 @@ async function getLatestEventByCity(city) {
   return rows[0] || null;
 }
 
+async function getRecentEventsByCity(city, limit = 10) {
+  const limitValue = Math.min(Math.max(Number(limit) || 10, 1), 50);
+  const [rows] = await pool.query(
+    `SELECT * FROM events
+     WHERE city = ?
+     ORDER BY event_date DESC, created_at DESC, id DESC
+     LIMIT ${limitValue}`,
+    [city]
+  );
+  const data = Array.isArray(rows) ? rows : [];
+  console.log("ENV HISTORY DATA:", data);
+  return data;
+}
+
 async function getEventById(eventId) {
   const [rows] = await pool.execute("SELECT * FROM events WHERE id = ?", [
     eventId,
@@ -84,6 +98,7 @@ module.exports = {
   syncEventTableSchema,
   createEvent,
   getLatestEventByCity,
+  getRecentEventsByCity,
   getLatestTriggeredEventByCity,
   getEventById,
 };

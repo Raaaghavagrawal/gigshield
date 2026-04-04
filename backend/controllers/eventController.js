@@ -3,7 +3,9 @@ const { fetchWeatherByCity } = require("../services/weatherService");
 const { fetchAqiByCity } = require("../services/aqiService");
 
 function computeTriggered(rainfall, aqi) {
-  return Number(rainfall) > 50 || Number(aqi) > 300;
+  const isDemo = process.env.DEMO_MODE === "true";
+  if (isDemo) return true;
+  return Number(rainfall) > 5 || Number(aqi) > 150;
 }
 
 async function ingestEnvironmentForCity(city) {
@@ -99,16 +101,17 @@ async function simulateEvent(req, res, next) {
       `[SIMULATE_EVENT] event_id=${eventId} city=${city} rainfall=${rainfall} aqi=${aqi} forced_trigger=true`
     );
 
+    // Call payout service
+    const { processPayoutsForCity } = require("../services/payoutService");
+    const payoutResult = await processPayoutsForCity(city);
+    console.log("💰 Payout Triggered for City:", city, payoutResult);
+
     return res.status(201).json({
-      message: "Simulated event created",
+      message: "Simulated event created and payouts triggered",
       data: {
         event_id: eventId,
         city,
-        rainfall: Number(rainfall),
-        temperature: Number(temperature || 0),
-        aqi: Number(aqi),
-        triggered: forcedTriggered,
-        event_date: eventDate,
+        payouts: payoutResult
       },
     });
   } catch (error) {

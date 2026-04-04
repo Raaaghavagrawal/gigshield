@@ -15,7 +15,7 @@ function signToken(payload) {
 
 async function signup(req, res, next) {
   try {
-    const { name, email, password, city, platform, weekly_income } = req.body;
+    const { name, email, password, city, platform, weekly_income, avg_daily_deliveries, earnings_per_delivery } = req.body;
 
     if (!name || !email || !password || !city || !platform || !weekly_income) {
       return res.status(400).json({ message: "Missing required fields" });
@@ -34,6 +34,8 @@ async function signup(req, res, next) {
       city,
       platform,
       weeklyIncome: Number(weekly_income),
+      avgDailyDeliveries: Number(avg_daily_deliveries || 20),
+      earningsPerDelivery: Number(earnings_per_delivery || 40),
     });
 
     const { initializeWallet } = require("../services/walletService");
@@ -81,6 +83,8 @@ async function login(req, res, next) {
         city: user.city,
         platform: user.platform,
         weekly_income: user.weekly_income,
+        avg_daily_deliveries: user.avg_daily_deliveries || 20,
+        earnings_per_delivery: user.earnings_per_delivery || 40,
       },
     });
   } catch (error) {

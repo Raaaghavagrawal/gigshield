@@ -28,6 +28,8 @@ function AuthPage() {
     city: "",
     platform: "Swiggy",
     weekly_income: "",
+    avg_daily_deliveries: "20",
+    earnings_per_delivery: "40",
   });
 
   const onChange = (e) => {
@@ -44,6 +46,8 @@ function AuthPage() {
         const signupRes = await api.post("/api/auth/signup", {
           ...form,
           weekly_income: Number(form.weekly_income),
+          avg_daily_deliveries: Number(form.avg_daily_deliveries),
+          earnings_per_delivery: Number(form.earnings_per_delivery),
         });
         localStorage.setItem("gigshield_token", signupRes.data.token);
         localStorage.setItem("gigshield_user", JSON.stringify(signupRes.data.user));
@@ -205,6 +209,10 @@ function AuthPage() {
                       <option className="bg-slate-900">Zomato</option>
                       <option className="bg-slate-900">Rapido</option>
                       <option className="bg-slate-900">Uber</option>
+                      <option className="bg-slate-900">Dunzo</option>
+                      <option className="bg-slate-900">Porter</option>
+                      <option className="bg-slate-900">Zepto</option>
+                      <option className="bg-slate-900">Blinkit</option>
                     </select>
                   </div>
                   <div className="relative">
@@ -219,6 +227,34 @@ function AuthPage() {
                       onChange={onChange}
                       required
                       className="w-full h-10 text-sm px-3 pl-8 py-2 bg-slate-900/50 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all"
+                    />
+                  </div>
+                  <div className="relative">
+                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                      <Monitor size={14} />
+                    </span>
+                    <input
+                      name="avg_daily_deliveries"
+                      type="number"
+                      placeholder="Daily Deliveries"
+                      value={form.avg_daily_deliveries}
+                      onChange={onChange}
+                      required
+                      className="w-full h-10 text-sm px-3 pl-9 py-2 bg-slate-900/50 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all"
+                    />
+                  </div>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">
+                      ₹/D
+                    </span>
+                    <input
+                      name="earnings_per_delivery"
+                      type="number"
+                      placeholder="₹ Per Order"
+                      value={form.earnings_per_delivery}
+                      onChange={onChange}
+                      required
+                      className="w-full h-10 text-sm px-3 pl-9 py-2 bg-slate-900/50 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all"
                     />
                   </div>
                 </div>

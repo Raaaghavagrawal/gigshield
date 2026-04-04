@@ -29,6 +29,8 @@ async function ensureColumn(tableName, columnName, columnDefinitionSql) {
 
 async function syncUserTableSchema() {
   await ensureColumn("users", "last_active_at", "TIMESTAMP NULL DEFAULT NULL");
+  await ensureColumn("users", "avg_daily_deliveries", "INT DEFAULT 20");
+  await ensureColumn("users", "earnings_per_delivery", "INT DEFAULT 40");
 }
 
 async function createUser({
@@ -38,11 +40,14 @@ async function createUser({
   city,
   platform,
   weeklyIncome,
+  avgDailyDeliveries = 20,
+  earningsPerDelivery = 40,
 }) {
+  await syncUserTableSchema();
   const [result] = await pool.execute(
-    `INSERT INTO users (name, email, password, city, platform, weekly_income, last_active_at)
-     VALUES (?, ?, ?, ?, ?, ?, NOW())`,
-    [name, email, passwordHash, city, platform, weeklyIncome]
+    `INSERT INTO users (name, email, password, city, platform, weekly_income, last_active_at, avg_daily_deliveries, earnings_per_delivery)
+     VALUES (?, ?, ?, ?, ?, ?, NOW(), ?, ?)`,
+    [name, email, passwordHash, city, platform, weeklyIncome, avgDailyDeliveries, earningsPerDelivery]
   );
   return result.insertId;
 }
@@ -56,7 +61,7 @@ async function getUserByEmail(email) {
 
 async function getUserById(id) {
   const [rows] = await pool.execute(
-    "SELECT id, name, email, city, platform, weekly_income FROM users WHERE id = ?",
+    "SELECT id, name, email, city, platform, weekly_income, avg_daily_deliveries, earnings_per_delivery FROM users WHERE id = ?",
     [id]
   );
   return rows[0] || null;
@@ -65,7 +70,7 @@ async function getUserById(id) {
 async function getUserInternal(id) {
   await syncUserTableSchema();
   const [rows] = await pool.execute(
-    "SELECT id, name, email, city, platform, weekly_income, last_active_at FROM users WHERE id = ?",
+    "SELECT id, name, email, city, platform, weekly_income, last_active_at, avg_daily_deliveries, earnings_per_delivery FROM users WHERE id = ?",
     [id]
   );
   return rows[0] || null;

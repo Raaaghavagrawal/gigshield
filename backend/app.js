@@ -6,6 +6,7 @@ const { syncEventTableSchema } = require("./models/eventModel");
 const { syncPayoutTableSchema } = require("./models/payoutModel");
 const { syncWalletTableSchema } = require("./models/walletModel");
 const { syncSystemLogTableSchema } = require("./models/systemLogModel");
+const { syncUserTableSchema } = require("./models/userModel");
 const { startCronJobs } = require("./jobs/cronJob");
 
 const authRoutes = require("./routes/authRoutes");
@@ -18,8 +19,32 @@ const environmentRoutes = require("./routes/environmentRoutes");
 const aiRoutes = require("./routes/aiRoutes");
 const statsRoutes = require("./routes/statsRoutes");
 const systemRoutes = require("./routes/systemRoutes");
+const { router: userRoutes, protect: protectMiddleware } = require("./routes/userRoutes");
 
 const app = express();
+
+// Allow direct browser calls to the API when the Vite dev server uses VITE_API_BASE_URL (CORS bypass for proxy issues).
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (
+    origin &&
+    (/^http:\/\/localhost(:\d+)?$/i.test(origin) ||
+      /^http:\/\/127\.0\.0\.1(:\d+)?$/i.test(origin))
+  ) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization, X-Requested-With"
+    );
+    res.setHeader(
+      "Access-Control-Allow-Methods",
+      "GET,POST,PUT,PATCH,DELETE,OPTIONS"
+    );
+  }
+  if (req.method === "OPTIONS") return res.sendStatus(204);
+  next();
+});
 
 app.use(express.json());
 app.use(morgan("dev"));
@@ -40,6 +65,7 @@ app.use("/api/risk-score", riskRoutes);
 app.use("/api/analyze", analyzeRoutes);
 app.use("/ai", aiRoutes);
 app.use("/api/stats", statsRoutes);
+app.use("/api/users", userRoutes);
 app.use("/dashboard", statsRoutes); // Exact requirement from latest prompt
 
 
@@ -54,7 +80,7 @@ app.use((err, _req, res, _next) => {
   });
 });
 
-const PORT = Number(process.env.PORT || 5000);
+const PORT = Number(process.env.PORT || 5001);
 
 async function startServer() {
   try {
@@ -63,8 +89,15 @@ async function startServer() {
     await syncPayoutTableSchema();
     await syncWalletTableSchema();
     await syncSystemLogTableSchema();
+    await syncUserTableSchema();
     app.listen(PORT, () => {
-      console.log(`Server running at http://localhost:${PORT}`);
+      console.log(
+        `[gigshield-api] Express listening on http://localhost:${PORT} (PORT=${PORT})`
+      );
+      console.log(`[gigshield-api] Health: http://localhost:${PORT}/health`);
+      console.log(
+        `[gigshield-api] Example: http://localhost:${PORT}/api/system/status`
+      );
       startCronJobs();
     });
   } catch (error) {
