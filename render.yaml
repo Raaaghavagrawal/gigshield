@@ -34,7 +34,7 @@ services:
           property: host
       - key: FRONTEND_URL
         fromService:
-          type: static_site
+          type: web
           name: frontend
           property: host
       - key: JWT_SECRET
@@ -52,7 +52,7 @@ services:
         sync: false
 
   # 3. Frontend (Vite/Static Site)
-  - type: static_site
+  - type: web
     name: frontend
     env: static
     buildCommand: |
