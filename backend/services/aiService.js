@@ -3,7 +3,11 @@ const { preprocessEnvironmentData } = require("./dataPreprocessor");
 const { buildFeatureVector } = require("./featureEngineering");
 const { logModelPrediction } = require("../models/modelLogModel");
 
-const AI_SERVICE_URL = process.env.AI_SERVICE_URL || "http://localhost:8000";
+const AI_SERVICE_URL = process.env.ML_URL || process.env.AI_SERVICE_URL;
+
+if (!AI_SERVICE_URL) {
+  console.warn("[WARNING] ML_URL / AI_SERVICE_URL is not set. AI predictions may fail in production.");
+}
 
 /**
  * Call the integrated AI model for all predictions using cleaner preprocessed data
@@ -35,7 +39,7 @@ async function getIntegratedAIPredictions(rawFeatures) {
 
     return aiData;
   } catch (err) {
-    console.error("AI Service Error (Integrated):", err.message);
+    console.error("API ERROR:", err.message);
     // Safe Fallback logic
     return {
       risk_score: 50,

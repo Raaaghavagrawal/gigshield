@@ -1,10 +1,6 @@
 import axios from "axios";
-
-/** Empty string = same-origin relative URLs (Vite dev proxy). */
 const ENV_BASE = (import.meta.env.VITE_API_BASE_URL || "").trim();
-
-/** When proxy fails (ECONNREFUSED / network), retry once against the backend directly (requires CORS on server). */
-const DEV_DIRECT_BACKEND = "http://localhost:5001";
+const DEV_DIRECT_BACKEND = "";
 
 export const api = axios.create({
   baseURL: ENV_BASE,

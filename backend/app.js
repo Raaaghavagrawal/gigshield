@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const cors = require("cors");
 const morgan = require("morgan");
 const { testDbConnection } = require("./config/db");
 const { syncUserTableSchema } = require("./models/userModel");
@@ -24,35 +25,11 @@ const { router: userRoutes, protect: protectMiddleware } = require("./routes/use
 
 const app = express();
 
-// Allow direct browser calls to the API when the Vite dev server uses VITE_API_BASE_URL (CORS bypass for proxy issues).
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  const { FRONTEND_URL } = process.env;
-  const allowedProductionOrigins = [
-    "https://gigshield-o25b.vercel.app", // Your current Vercel frontend
-    FRONTEND_URL,
-  ].filter(Boolean);
+// Enable global CORS for production connectivity between Vercel, Render, and Railway
+app.use(cors({ origin: "*" }));
 
-  if (
-    origin &&
-    (/^http:\/\/localhost(:\d+)?$/i.test(origin) ||
-      /^http:\/\/127\.0\.0\.1(:\d+)?$/i.test(origin) ||
-      allowedProductionOrigins.includes(origin))
-  ) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-    res.setHeader("Access-Control-Allow-Credentials", "true");
-    res.setHeader(
-      "Access-Control-Allow-Headers",
-      "Content-Type, Authorization, X-Requested-With"
-    );
-    res.setHeader(
-      "Access-Control-Allow-Methods",
-      "GET,POST,PUT,PATCH,DELETE,OPTIONS"
-    );
-  }
-  if (req.method === "OPTIONS") return res.sendStatus(204);
-  next();
-});
+app.use(express.json());
+app.use(morgan("dev"));
 
 app.use(express.json());
 app.use(morgan("dev"));
