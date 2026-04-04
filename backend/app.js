@@ -26,10 +26,12 @@ const app = express();
 // Allow direct browser calls to the API when the Vite dev server uses VITE_API_BASE_URL (CORS bypass for proxy issues).
 app.use((req, res, next) => {
   const origin = req.headers.origin;
+  const { FRONTEND_URL } = process.env;
   if (
     origin &&
     (/^http:\/\/localhost(:\d+)?$/i.test(origin) ||
-      /^http:\/\/127\.0\.0\.1(:\d+)?$/i.test(origin))
+      /^http:\/\/127\.0\.0\.1(:\d+)?$/i.test(origin) ||
+      (FRONTEND_URL && origin === FRONTEND_URL))
   ) {
     res.setHeader("Access-Control-Allow-Origin", origin);
     res.setHeader("Access-Control-Allow-Credentials", "true");
