@@ -1,24 +1,22 @@
 const mysql = require("mysql2/promise");
 
+// The pool can take the DATABASE_URL connection string directly as its configuration.
+// We then append the required SSL settings for Railway compatibility.
 const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT || 3306),
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
+  uri: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false
-  }
+  },
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
 async function testDbConnection() {
   const connection = await pool.getConnection();
   try {
     await connection.query("SELECT 1");
-    console.log(`[DB] Connected to Railway MySQL 🚀 (${process.env.DB_HOST}:${process.env.DB_PORT || 3306})`);
+    console.log(`[DB] Connected to Railway MySQL 🚀 (Public URL)`);
   } catch (err) {
     console.error("DB connection failed:", err.message);
     throw err;
