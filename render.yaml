@@ -1,5 +1,5 @@
 services:
-  # AI Service (Python/FastAPI)
+  # 1. AI Service (Python/FastAPI)
   - type: web
     name: ai-service
     env: python
@@ -14,7 +14,7 @@ services:
       - key: PORT
         value: 10000
 
-  # Node.js Backend
+  # 2. Node.js Backend API
   - type: web
     name: backend
     env: node
@@ -25,18 +25,20 @@ services:
       cd backend
       npm start
     envVars:
+      - key: PORT
+        value: 10000
       - key: AI_SERVICE_URL
         fromService:
           type: web
           name: ai-service
           property: host
-      - key: PORT
-        value: 10000
       - key: FRONTEND_URL
         fromService:
-          type: static
+          type: static_site
           name: frontend
           property: host
+      - key: JWT_SECRET
+        generateValue: true
       # Placeholder variables for DB. Update these in Render dashboard
       - key: DB_HOST
         sync: false
@@ -48,11 +50,9 @@ services:
         sync: false
       - key: DB_NAME
         sync: false
-      - key: JWT_SECRET
-        generateValue: true
 
-  # Frontend (Vite/Static Site)
-  - type: static
+  # 3. Frontend (Vite/Static Site)
+  - type: static_site
     name: frontend
     env: static
     buildCommand: |
