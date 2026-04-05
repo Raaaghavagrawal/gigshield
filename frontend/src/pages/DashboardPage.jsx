@@ -100,15 +100,29 @@ function DashboardPage() {
 
   const [forecast, setForecast] = useState(null);
 
-  const fetchForecast = useCallback(() => {
+  const fetchForecast = useCallback(async () => {
     if (!user?.id) return;
-    fetch(`/api/ai/forecast/${user.id}`)
-      .then(res => res.json())
-      .then(data => {
-        console.log("ML FORECAST:", data);
-        setForecast(data);
-      })
-      .catch(err => console.error("Forecast Error:", err));
+    try {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
+      const res = await fetch(`${baseUrl}/api/ai/forecast/${user.id || 1}`);
+      const text = await res.text();
+      
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (err) {
+        console.error("Forecast service unavailable");
+        return;
+      }
+      
+      if (!data || data.length === 0) return null;
+      
+      console.log("FORECAST:", data);
+      setForecast(data);
+    } catch (err) {
+      console.error("Forecast Error:", err);
+      console.error("Forecast service unavailable");
+    }
   }, [user?.id]);
 
   useEffect(() => {
@@ -577,10 +591,16 @@ function DashboardPage() {
                 <div className="lg:col-span-2 bg-[#111827] rounded-xl p-5 border border-gray-800 shadow-sm hover:border-gray-700 hover:shadow-xl transition-all duration-300 group h-full flex flex-col items-center justify-center text-center">
                   <div className="flex flex-col items-center mb-8 w-full">
                     <div className="text-center">
-                      <p className="text-sm text-gray-400 font-medium tracking-wide">Net Protected Forecast</p>
-                      <h3 className="text-4xl font-bold mt-2 text-white tracking-tighter">
-                        {forecast?.net_protected_forecast ? `₹${forecast.net_protected_forecast}` : "Forecast unavailable"}
-                      </h3>
+                      {!forecast ? (
+                        <p className="text-sm text-gray-400 font-medium tracking-wide">Loading forecast...</p>
+                      ) : (
+                        <>
+                          <p className="text-sm text-gray-400 font-medium tracking-wide">Net Protected Forecast</p>
+                          <h3 className="text-4xl font-bold mt-2 text-white tracking-tighter">
+                            ₹{forecast.net_protected_forecast}
+                          </h3>
+                        </>
+                      )}
                       {forecast && (
                         <div className="mt-4 flex flex-wrap justify-center items-center gap-6 text-sm">
                           <div className="flex flex-col items-center">
@@ -607,13 +627,9 @@ function DashboardPage() {
                       )}
                     </div>
                   </div>
-                  <div className="h-64 w-full min-h-[256px]">
-                    {barData.length === 0 ? (
-                      <div className="h-full flex items-center justify-center text-gray-500 text-sm">
-                        No live data available
-                      </div>
-                    ) : (
-                      <ResponsiveContainer width="100%" height="100%">
+                  <div className="w-full h-[300px] min-h-[300px]">
+                    {(!barData || barData.length === 0) ? null : (
+                      <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
                         <ComposedChart data={barData} margin={{ top: 8, right: 12, left: 0, bottom: 4 }}>
                           <CartesianGrid strokeDasharray="3 3" stroke="#111827" vertical={false} />
                           <XAxis
@@ -691,9 +707,9 @@ function DashboardPage() {
                   <p className="text-[10px] text-gray-500 mt-1 mb-6 leading-snug">
                     Four channels (air, rain, heat, systemic) weighted from live telemetry—shares sum to 100%.
                   </p>
-                  <div className="h-48 w-full relative min-h-[192px]">
-                    {pieData && pieData.length > 0 ? (
-                      <ResponsiveContainer width="100%" height="100%">
+                  <div className="w-full h-[300px] min-h-[300px] relative">
+                    {(!pieData || pieData.length === 0) ? null : (
+                      <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
                         <PieChart>
                           <Pie
                             data={pieData}
@@ -725,10 +741,6 @@ function DashboardPage() {
                           />
                         </PieChart>
                       </ResponsiveContainer>
-                    ) : (
-                      <div className="h-full flex items-center justify-center text-gray-500 text-xs italic opacity-50">
-                        Not enough data
-                      </div>
                     )}
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
                        <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">{envSnapshot ? "LIVE" : "WAITING"}</p>
@@ -915,7 +927,7 @@ function DashboardPage() {
                     )}
                     <div className="w-full mt-4 h-[176px] min-h-[176px]">
                       {financialMomentumChart.series.length > 0 ? (
-                        <ResponsiveContainer width="100%" height={176}>
+                        <ResponsiveContainer width="100%" height={176} minWidth={1} minHeight={1}>
                           <AreaChart
                             data={financialMomentumChart.series}
                             margin={{ top: 6, right: 6, left: -6, bottom: 4 }}
@@ -1095,9 +1107,9 @@ function DashboardPage() {
                         <LineIcon size={12} className="text-emerald-400/90" />
                         Risk pulse (this window)
                       </p>
-                      {chartData && chartData.length > 0 ? (
-                        <div className="flex-1 w-full min-h-[120px]">
-                          <ResponsiveContainer width="100%" height="100%">
+                        <div className="flex-1 w-full h-[300px] min-h-[300px]">
+                          {(!chartData || chartData.length === 0) ? null : (
+                          <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
                             <AreaChart data={chartData} margin={{ top: 6, right: 8, left: -18, bottom: 0 }}>
                               <defs>
                                 <linearGradient id="riskPulseFill" x1="0" y1="0" x2="0" y2="1">
@@ -1135,12 +1147,8 @@ function DashboardPage() {
                               />
                             </AreaChart>
                           </ResponsiveContainer>
+                          )}
                         </div>
-                      ) : (
-                        <div className="flex-1 flex items-center justify-center text-gray-600 text-[11px] italic">
-                          Fetch environment data to plot the pulse
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>
@@ -1161,9 +1169,9 @@ function DashboardPage() {
                       </div>
                     )}
                   </div>
-                  <div className="h-72 w-full min-h-[288px]">
-                    {chartData && chartData.length > 0 ? (
-                      <ResponsiveContainer width="100%" height="100%">
+                  <div className="w-full h-[300px] min-h-[300px]">
+                    {(!chartData || chartData.length === 0) ? null : (
+                      <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
                         <ComposedChart data={chartData}>
                           <defs>
                             <linearGradient id="riskCyan" x1="0" y1="0" x2="0" y2="1">
@@ -1196,10 +1204,6 @@ function DashboardPage() {
                           <Line type="monotone" dataKey="predicted_loss" name="Predicted Loss" stroke="#f59e0b" strokeWidth={2} dot={false} />
                         </ComposedChart>
                       </ResponsiveContainer>
-                    ) : (
-                      <div className="h-full flex items-center justify-center text-gray-500 text-xs italic opacity-50">
-                        Insufficient environmental vectors for mapping
-                      </div>
                     )}
                   </div>
 

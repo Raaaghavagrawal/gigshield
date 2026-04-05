@@ -81,8 +81,16 @@ async function getForecast(req, res, next) {
       earnings_per_delivery: user.earnings_per_delivery || 40
     };
 
-    const mlResponse = await axios.post("http://localhost:8000/predict", aiPayload);
-    const data = mlResponse.data;
+    let data;
+    try {
+      const mlBaseUrl = process.env.AI_SERVICE_URL || "http://localhost:8000";
+      const aiResult = await axios.post(`${mlBaseUrl}/predict`, aiPayload);
+      console.log("AI RESULT:", aiResult?.data);
+      data = aiResult.data;
+    } catch (mlError) {
+      console.error("ML service failed, using default:", mlError.message);
+      data = { estimated_loss: 0, risk_score: 0, confidence: 0 };
+    }
 
     const weekly_income = (user.avg_daily_deliveries || 20) * (user.earnings_per_delivery || 40) * 7;
     const net_protected_forecast = weekly_income - data.estimated_loss;
