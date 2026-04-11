@@ -16,6 +16,7 @@ import {
   Bell,
   Settings as SettingsIcon,
   ChevronRight,
+  Package,
 } from "lucide-react";
 
 // Import Modular Components
@@ -28,6 +29,8 @@ import FraudDetection from "./dashboard/FraudDetection";
 import WalletProtection from "./dashboard/WalletProtection";
 import NotificationsCenter from "./dashboard/NotificationsCenter";
 import Settings from "./dashboard/Settings";
+import ProfilePage from "./ProfilePage";
+import OrdersPage from "./OrdersPage";
 
 function DashboardPage() {
   const navigate = useNavigate();
@@ -43,6 +46,8 @@ function DashboardPage() {
     { id: "notifications", label: "Notifications", icon: <Bell size={18} /> },
     { id: "claims", label: "Claims History", icon: <History size={18} /> },
     { id: "wallet", label: "Wallet & Earnings", icon: <WalletIcon size={18} /> },
+    { id: "profile", label: "Worker Profile", icon: <Shield size={18} /> },
+    { id: "orders", label: "Logistics Hub", icon: <Package size={18} /> },
     { id: "settings", label: "Settings", icon: <SettingsIcon size={18} /> },
   ];
 
@@ -81,7 +86,10 @@ function DashboardPage() {
         </div>
 
         <div className="mt-auto p-6 border-t border-white/5">
-          <div className="bg-slate-800/20 p-4 rounded-xl border border-white/5 hover:border-blue-500/20 transition-all duration-300 group">
+          <div 
+            onClick={() => navigate("/profile")}
+            className="bg-slate-800/20 p-4 rounded-xl border border-white/5 hover:border-blue-500/20 transition-all duration-300 group cursor-pointer"
+          >
             <div className="flex items-center gap-3 mb-3">
               <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400 font-bold border border-blue-500/20">
                 {user.name?.[0] || 'G'}
@@ -149,7 +157,9 @@ function DashboardPage() {
               {activeTab === "fraud" && <FraudDetection />}
               {activeTab === "wallet" && <WalletProtection />}
               {activeTab === "notifications" && <NotificationsCenter />}
-              {activeTab === "settings" && <Settings />}
+              { activeTab === "profile" && <ProfilePage isDashboard={true} /> }
+              { activeTab === "orders" && <OrdersPage isDashboard={true} /> }
+              { activeTab === "settings" && <Settings /> }
             </motion.div>
           </AnimatePresence>
         </main>

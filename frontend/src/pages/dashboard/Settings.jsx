@@ -264,7 +264,7 @@ const Settings = () => {
                    {[
                      { name: profile?.city || 'Delhi', status: 'Online', ip: '192.168.1.104', icon: <MapPin size={20} className="text-blue-500"/> },
                      { name: 'Mobile Node (iPhone 14)', status: 'Online', ip: '10.0.0.42', icon: <Smartphone size={20} className="text-indigo-500"/> },
-                     { name: 'Gateway Node', status: 'Standby', ip: 'GigShield Cloud', icon: <Globe size={20} className="text-emerald-500"/> },
+                     { name: 'Gateway Node', status: 'Standby', ip: 'Aegis Network', icon: <Globe size={20} className="text-emerald-500"/> },
                    ].map((node, i) => (
                      <div key={i} className="p-5 bg-slate-950/40 rounded-2xl border border-white/5 flex items-center justify-between group hover:bg-slate-900/40 transition-all">
                         <div className="flex items-center gap-4">

@@ -34,7 +34,7 @@ app.use(express.json());
 app.use(morgan("dev"));
 
 // System & Health Endpoints
-app.get("/", (req, res) => res.send("GigShield Intelligence API Running"));
+app.get("/", (req, res) => res.send("Aegis Intelligence API Running"));
 app.get("/health", (req, res) => res.json({ status: "active", engine: "v1.4.2" }));
 
 // User Context Context
@@ -103,7 +103,7 @@ async function startServer() {
     await syncNotificationTableSchema();
     
     app.listen(PORT, () => {
-      console.log(`[gigshield-api] Synchronized on http://localhost:${PORT}`);
+      console.log(`[aegis-api] Synchronized on http://localhost:${PORT}`);
       startCronJobs();
     });
   } catch (error) {

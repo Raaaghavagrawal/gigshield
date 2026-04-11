@@ -21,7 +21,7 @@ router.get("/me", protect, (req, res, next) => {
   return getUserPayouts(req, res, next);
 });
 
-// Backward compatibility (keeping for internal use if needed)
+// Backward compatibility
 router.get("/:user_id", protect, (req, res, next) => {
   if (req.originalUrl.includes('wallet')) {
     return getWallet(req, res, next);

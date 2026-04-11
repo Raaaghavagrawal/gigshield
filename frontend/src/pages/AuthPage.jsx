@@ -356,7 +356,7 @@ function AuthPage() {
                 </button>
               </div>
 
-              {error && <p className="text-red-400 text-xs">{error}</p>}
+              {error && <p className="text-rose-400 text-xs">{error}</p>}
 
               <button
                 disabled={loading}

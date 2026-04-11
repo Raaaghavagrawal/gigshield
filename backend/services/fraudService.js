@@ -72,4 +72,3 @@ async function detectFraud(userId, eventId) {
 module.exports = {
   detectFraud,
 };
-

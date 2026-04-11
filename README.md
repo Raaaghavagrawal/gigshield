@@ -1,4 +1,5 @@
 # 🛡️ Aegis AI
+
 ### AI-Powered Parametric Insurance for India's Gig Workers
 
 > **Guidewire Hackathon 2026** · Demo Prototype

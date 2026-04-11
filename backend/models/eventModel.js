@@ -23,7 +23,6 @@ async function ensureColumn(tableName, columnName, columnDefinitionSql) {
        ADD COLUMN \`${columnName}\` ${columnDefinitionSql}`
     );
   } catch (error) {
-    // In case of race condition between multiple instances
     if (error && error.code === "ER_DUP_FIELDNAME") return;
     throw error;
   }
