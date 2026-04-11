@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# Node.js
+node_modules/
+frontend/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Build outputs
+frontend/dist/
+frontend/build/
+
+# IDEs/System
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Gemini/AI tools
+.gemini/
+.antigravity/
+brain/

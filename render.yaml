@@ -1,0 +1,72 @@
+services:
+  # 1. AI Service (Python/FastAPI)
+  - type: web
+    name: ai-service
+    runtime: python
+    buildCommand: |
+      cd ai_service
+      pip install -r requirements.txt
+    startCommand: |
+      cd ai_service
+      uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /
+    envVars:
+      - key: PORT
+        value: 10000
+
+  # 2. Node.js Backend API
+  - type: web
+    name: backend
+    runtime: node
+    buildCommand: |
+      cd backend
+      npm install
+    startCommand: |
+      cd backend
+      npm start
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: AI_SERVICE_URL
+        fromService:
+          type: web
+          name: ai-service
+          property: host
+      - key: FRONTEND_URL
+        fromService:
+          type: web
+          name: frontend
+          property: host
+      - key: JWT_SECRET
+        generateValue: true
+      # Database: Paste your MySQL connection details here in the Render Dashboard
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: 3306
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        sync: false
+
+  # 3. Frontend (Vite/Static Site)
+  - type: web
+    name: frontend
+    runtime: static
+    buildCommand: |
+      cd frontend
+      npm install
+      npm run build
+    staticPublishPath: frontend/dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        fromService:
+          type: web
+          name: backend
+          property: host
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
