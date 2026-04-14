@@ -18,12 +18,12 @@ const Hero = () => {
           viewport={{ once: true }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
         >
-          <h1 style={{ fontSize: 'clamp(2.5rem, 6vw, 4rem)', fontWeight: 900, lineHeight: 1.1, marginBottom: '1.5rem', letterSpacing: '-0.03em' }}>
+          <h1 className="text-gray-900 dark:text-white" style={{ fontSize: 'clamp(2.5rem, 6vw, 4rem)', fontWeight: 900, lineHeight: 1.1, marginBottom: '1.5rem', letterSpacing: '-0.03em' }}>
             Protect Your Income <br />
             <span className="gradient-text">Automatically.</span>
           </h1>
           
-          <p style={{ color: '#94a3b8', fontSize: '1.1rem', maxWidth: '500px', marginBottom: '2.5rem', lineHeight: 1.6 }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', maxWidth: '500px', marginBottom: '2.5rem', lineHeight: 1.6 }}>
             Parametric insurance that pays out instantly when weather or pollution hits your city. No complicated claim forms — just AI-powered protection.
           </p>
           
@@ -38,20 +38,20 @@ const Hero = () => {
               </Link>
             </motion.div>
             
-            <button style={{ background: 'transparent', color: '#f8fafc', border: '1px solid rgba(255,255,255,0.2)', padding: '14px 28px', borderRadius: '100px', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-              <Play size={16} fill="white" /> See How It Works
+            <button className="border border-gray-200 dark:border-white/20 text-gray-800 dark:text-white" style={{ background: 'transparent', padding: '14px 28px', borderRadius: '100px', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+              <Play size={16} className="fill-gray-800 dark:fill-white" /> See How It Works
             </button>
           </div>
 
           <div style={{ marginTop: '3rem', display: 'flex', gap: '2rem' }}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '1.5rem', fontWeight: 800 }}>50M+</span>
-              <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 500, textTransform: 'uppercase' }}>Gig Workers</span>
+              <span className="text-gray-900 dark:text-white" style={{ fontSize: '1.5rem', fontWeight: 800 }}>50M+</span>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 500, textTransform: 'uppercase' }}>Gig Workers</span>
             </div>
             <div style={{ width: '1px', background: 'rgba(255,255,255,0.1)' }}></div>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '1.5rem', fontWeight: 800 }}>₹0</span>
-              <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 500, textTransform: 'uppercase' }}>Claim Paperwork</span>
+              <span className="text-gray-900 dark:text-white" style={{ fontSize: '1.5rem', fontWeight: 800 }}>₹0</span>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 500, textTransform: 'uppercase' }}>Claim Paperwork</span>
             </div>
           </div>
         </motion.div>
@@ -71,8 +71,8 @@ const Hero = () => {
                style={{ fontSize: '6rem', marginBottom: '20px' }}>
                🛡️
              </motion.div>
-             <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '10px' }}>AI Shield Active</h3>
-             <p style={{ color: '#94a3b8', fontSize: '0.9rem' }}>Continuously monitoring weather triggers across 500+ Indian districts.</p>
+             <h3 className="text-gray-900 dark:text-white" style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '10px' }}>AI Shield Active</h3>
+             <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Continuously monitoring weather triggers across 500+ Indian districts.</p>
           </div>
           
           {/* Animated Circles around the shield */}

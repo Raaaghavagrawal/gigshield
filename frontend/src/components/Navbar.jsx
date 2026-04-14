@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, Menu, X, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import ThemeToggle from './ThemeToggle';
+import LanguageSelector from './LanguageSelector';
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -68,16 +70,20 @@ const Navbar = () => {
             );
           })}
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.5, duration: 0.5 }}
-          >
-            <Link to={localStorage.getItem("aegis_token") ? "/dashboard" : "/auth"} className="landing-nav-cta premium-btn">
-              {localStorage.getItem("aegis_token") ? "Dashboard" : "Get Started"}
-              <ChevronRight size={16} />
-            </Link>
-          </motion.div>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <LanguageSelector />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.5, duration: 0.5 }}
+            >
+              <Link to={localStorage.getItem("aegis_token") ? "/dashboard" : "/auth"} className="landing-nav-cta premium-btn">
+                {localStorage.getItem("aegis_token") ? "Dashboard" : "Get Started"}
+                <ChevronRight size={16} />
+              </Link>
+            </motion.div>
+          </div>
         </div>
 
         <button 
