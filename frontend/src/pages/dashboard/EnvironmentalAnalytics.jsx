@@ -52,7 +52,7 @@ const EnvironmentalAnalytics = () => {
   }, [fetchData]);
 
   const stats = [
-    { label: 'AQI Index', value: latestStats?.air_quality != null ? latestStats.air_quality : '--', sub: latestStats?.pollution || 'Atmospheric Health', icon: <Wind size={18} />, color: 'text-blue-400' },
+    { label: 'AQI Index', value: latestStats?.air_quality != null ? latestStats.air_quality : '--', sub: latestStats?.pollution || 'Atmospheric Health', icon: <Gauge size={18} />, color: 'text-blue-400' },
     { label: 'Rainfall Node', value: latestStats?.rain_mm != null ? `${latestStats.rain_mm}mm` : '--', sub: 'Precipitation Load', icon: <CloudRain size={18} />, color: 'text-indigo-400' },
     { label: 'Temp Gradient', value: latestStats?.temp_c != null ? `${latestStats.temp_c}°C` : '--', sub: 'Thermal Drift', icon: <Thermometer size={18} />, color: 'text-amber-400' },
     { label: 'Network Integrity', value: loading ? "Syncing" : "Synced", sub: `${envData.length} Telemetry Nodes`, icon: <Activity size={18} />, color: 'text-emerald-400' },
@@ -116,7 +116,10 @@ const EnvironmentalAnalytics = () => {
               <h4 className="text-sm font-bold text-gray-800 dark:text-white uppercase tracking-wider mb-1">Atmospheric Telemetry</h4>
               <p className="text-[11px] text-slate-500 font-medium uppercase">Rolling AQI and Pollution indices</p>
             </div>
-            <button onClick={fetchData} className="p-2 border border-white/5 rounded-lg text-slate-500 hover:text-white transition-all"><RefreshCcw size={16} className={loading ? 'animate-spin' : ''} /></button>
+            <div className="flex gap-2">
+              <button className="p-2 border border-white/5 rounded-lg text-slate-500 hover:text-white transition-all"><Download size={16} /></button>
+              <button onClick={fetchData} className="p-2 border border-white/5 rounded-lg text-slate-500 hover:text-white transition-all"><RefreshCcw size={16} className={loading ? 'animate-spin' : ''} /></button>
+            </div>
           </div>
           <div className="flex-1 w-full min-h-0 relative">
             {envData.length > 0 ? (
@@ -136,7 +139,8 @@ const EnvironmentalAnalytics = () => {
                     itemStyle={{ fontSize: '11px', fontWeight: 'bold' }}
                     labelStyle={{ fontSize: '11px', color: 'var(--text-muted)' }}
                   />
-                  <Area type="monotone" dataKey="aqi" stroke="#3b82f6" fillOpacity={1} fill="url(#colorAqi)" strokeWidth={2} />
+                  <Area type="monotone" dataKey="aqi" name="AQI Level" stroke="#3b82f6" fillOpacity={1} fill="url(#colorAqi)" strokeWidth={2} />
+                  <Legend verticalAlign="top" height={36} wrapperStyle={{fontSize: '10px', textTransform: 'uppercase', fontWeight: 'bold'}} />
                 </AreaChart>
               </ResponsiveContainer>
             ) : (
@@ -170,7 +174,13 @@ const EnvironmentalAnalytics = () => {
                      itemStyle={{ fontSize: '11px', fontWeight: 'bold' }}
                      labelStyle={{ fontSize: '11px', color: 'var(--text-muted)' }}
                   />
-                  <Bar dataKey="rainfall" fill="#818cf8" radius={[4, 4, 0, 0]} maxBarSize={30} />
+                  <Bar dataKey="rainfall" name="Rainfall (mm)" radius={[4, 4, 0, 0]} maxBarSize={30}>
+                    {chartData.map((entry, index) => (
+                      /* @ts-ignore - Cell is deprecated but requested to remain. Used for dynamic intensity highlighting. */
+                      <Cell key={`cell-${index}`} fill={entry.rainfall > 3 ? '#6366f1' : '#818cf8'} />
+                    ))}
+                  </Bar>
+                  <Legend verticalAlign="top" height={36} wrapperStyle={{fontSize: '10px', textTransform: 'uppercase', fontWeight: 'bold'}} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
@@ -201,7 +211,8 @@ const EnvironmentalAnalytics = () => {
                      itemStyle={{ fontSize: '11px', fontWeight: 'bold' }}
                      labelStyle={{ fontSize: '11px', color: 'var(--text-muted)' }}
                   />
-                  <Line type="monotone" dataKey="temperature" stroke="#3b82f6" strokeWidth={2} dot={{ r: 3, fill: '#3b82f6', strokeWidth: 0 }} activeDot={{ r: 5, strokeWidth: 0 }} />
+                  <Line type="monotone" dataKey="temperature" name="Temp Gradient" stroke="#3b82f6" strokeWidth={2} dot={{ r: 3, fill: '#3b82f6', strokeWidth: 0 }} activeDot={{ r: 5, strokeWidth: 0 }} />
+                  <Legend verticalAlign="top" height={36} wrapperStyle={{fontSize: '10px', textTransform: 'uppercase', fontWeight: 'bold'}} />
                 </LineChart>
               </ResponsiveContainer>
              ) : (

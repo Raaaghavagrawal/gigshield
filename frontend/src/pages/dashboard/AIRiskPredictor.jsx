@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { Zap, AlertTriangle, TrendingDown, Clock, Lightbulb, MapPin, ChevronRight, Activity, Loader2, RefreshCcw } from 'lucide-react';
 import { api } from '../../utils/api';
 
@@ -173,9 +173,13 @@ const AIRiskPredictor = () => {
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie data={riskLevels} innerRadius={70} outerRadius={90} paddingAngle={10} dataKey="value" stroke="none">
-                  {riskLevels.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
+                  {riskLevels.map((entry, index) => (
+                    /* @ts-ignore - Cell is deprecated in Recharts 4.0 but requested to keep and augment */
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
                 </Pie>
                 <Tooltip contentStyle={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '10px', fontSize: '11px', color: 'var(--text-main)' }} />
+                <Legend iconType="circle" verticalAlign="bottom" height={36} wrapperStyle={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 'bold', paddingTop: '20px' }} />
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">

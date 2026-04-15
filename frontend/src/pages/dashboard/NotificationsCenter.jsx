@@ -89,8 +89,8 @@ const NotificationsCenter = () => {
       {/* Header */}
       <motion.div variants={fadeUp} className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-black tracking-tight" style={{ color: "var(--text-bright)" }}>
-            Smart Alerts
+          <h2 className="text-2xl font-black tracking-tight flex items-center gap-2" style={{ color: "var(--text-bright)" }}>
+            <Sparkles size={20} className="text-indigo-400" /> Smart Alerts
           </h2>
           <p className="text-sm mt-0.5" style={{ color: "var(--text-muted)" }}>
             {logs.length} notifications · Real-time Aegis monitoring

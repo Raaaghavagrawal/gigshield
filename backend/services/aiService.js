@@ -9,9 +9,6 @@ if (!AI_SERVICE_URL) {
   console.warn("[WARNING] ML_URL / AI_SERVICE_URL is not set. AI predictions may fail in production.");
 }
 
-/**
- * Call the integrated AI model for all predictions using cleaner preprocessed data
- */
 async function getIntegratedAIPredictions(rawFeatures) {
   try {
     const city = rawFeatures.city || "Mumbai";

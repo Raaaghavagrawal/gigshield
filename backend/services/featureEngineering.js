@@ -1,17 +1,3 @@
-/**
- * Aegis Feature Engineering
- * Converts preprocessed raw data into enriched ML feature vectors.
- *
- * Features produced:
- *   rainfall, rainfall_avg_3d,
- *   aqi, aqi_avg_3d, aqi_trend,
- *   temperature,
- *   is_peak_hour, is_weekend,
- *   platform, rain_weight, speed_sensitivity,
- *   avg_daily_deliveries, earnings_per_delivery
- */
-
-// Peak delivery windows (local time)
 const LUNCH_WINDOW = { start: 12, end: 15 };
 const DINNER_WINDOW = { start: 19, end: 22 };
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Shield, Bell, Lock, MapPin, CreditCard, ChevronRight, Save, Loader2, AlertCircle, CheckCircle2, Key, Smartphone, Zap, Globe } from 'lucide-react';
 import { api } from '../../utils/api';

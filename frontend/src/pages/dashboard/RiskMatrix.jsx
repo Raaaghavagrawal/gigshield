@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Gauge, Wind, CloudRain, Activity, IndianRupee, LineChart as LineIcon, AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ComposedChart, Line } from 'recharts';
 
-const RiskMatrix = ({ 
+const RiskMatrix = React.memo(({ 
   city, 
   setCity, 
   income, 
@@ -246,6 +246,6 @@ const RiskMatrix = ({
       </div>
     </motion.div>
   );
-};
+});
 
 export default RiskMatrix;

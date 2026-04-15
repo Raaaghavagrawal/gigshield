@@ -3,7 +3,7 @@ import { useTheme } from '../context/ThemeContext';
 import { Sun, Moon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function ThemeToggle() {
+const ThemeToggle = React.memo(() => {
   const { theme, toggleTheme } = useTheme();
   const isDark = theme !== 'light';
 
@@ -49,4 +49,6 @@ export default function ThemeToggle() {
       </span>
     </motion.button>
   );
-}
+});
+
+export default ThemeToggle;

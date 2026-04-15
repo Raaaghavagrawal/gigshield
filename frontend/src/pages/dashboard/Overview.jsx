@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, ComposedChart, Line, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend } from 'recharts';
 import { Zap, TrendingUp, Activity, Loader2, AlertCircle, BadgeCheck, ArrowUpRight, ArrowDownRight, Shield, RefreshCcw, Wind, Droplets } from 'lucide-react';
@@ -71,6 +71,11 @@ function StatCard({ label, value, prefix, suffix, color, icon, trend, trendLabel
       </p>
       {trendLabel && (
         <p className="text-[10px] mt-2" style={{ color: "var(--text-dim)" }}>{trendLabel}</p>
+      )}
+      {arguments[0].children && (
+        <div className="h-10 w-full mt-4 opacity-50 group-hover:opacity-100 transition-opacity">
+          {arguments[0].children}
+        </div>
       )}
     </motion.div>
   );
@@ -197,7 +202,7 @@ const Overview = () => {
             Live Data
           </div>
           <button onClick={fetchData} className="p-2 rounded-xl transition-colors" style={{ color: "var(--text-muted)", background: "var(--bg-glass)" }}>
-            <RefreshCcw size={14} />
+            {loading ? <Loader2 size={14} className="animate-spin" /> : <RefreshCcw size={14} />}
           </button>
         </div>
       </motion.div>
@@ -212,7 +217,13 @@ const Overview = () => {
           icon={<Shield size={18} />}
           trend={12.4}
           trendLabel="vs last week"
-        />
+        >
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={chartData.slice(-10)}>
+              <Area type="monotone" dataKey="AQI" stroke="#6366f1" fill="#6366f1" fillOpacity={0.2} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </StatCard>
         <StatCard
           label="Weekly Earnings"
           value={ai.weekly_income || 0}
@@ -221,7 +232,13 @@ const Overview = () => {
           icon={<TrendingUp size={18} />}
           trend={8.2}
           trendLabel="Earnings up this week"
-        />
+        >
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData.slice(-10)}>
+              <Bar dataKey="Rainfall" fill="#10b981" radius={[2, 2, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </StatCard>
         <StatCard
           label="Potential Risk Exposure"
           value={ai.estimated_loss || 0}

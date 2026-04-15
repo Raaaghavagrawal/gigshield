@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Wallet, TrendingUp, ShieldCheck, Download, Activity, Loader2, AlertCircle, 
@@ -91,7 +91,7 @@ const WalletAndClaims = () => {
         </div>
         <div className="bg-slate-800/20 border border-white/5 p-6 rounded-2xl relative overflow-hidden">
           <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/10 blur-2xl translate-x-12 -translate-y-12"></div>
-          <div className="w-10 h-10 bg-indigo-500/10 text-indigo-400 rounded-xl flex items-center justify-center mb-4 border border-white/5"><Activity size={20} /></div>
+          <div className="w-10 h-10 bg-indigo-500/10 text-indigo-400 rounded-xl flex items-center justify-center mb-4 border border-white/5"><AlertCircle size={20} /></div>
           <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Response Latency</p>
           <p className="text-2xl font-black text-white uppercase tracking-tight">{data.payouts.length > 0 ? "< 2.4s" : "--"}</p>
         </div>
@@ -102,7 +102,9 @@ const WalletAndClaims = () => {
         <div className="lg:col-span-2 bg-slate-800/20 border border-white/5 rounded-2xl p-8 flex flex-col hover:border-white/10 transition-all duration-300">
            <div className="flex justify-between items-start mb-10">
               <div>
-                <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-1">Revenue Trajectory</h4>
+                <h4 className="text-sm font-bold text-white uppercase tracking-wider mb-1 flex items-center gap-2">
+                  <Activity size={18} className="text-emerald-500" /> Revenue Trajectory
+                </h4>
                 <p className="text-[11px] text-slate-500 font-medium tracking-tight uppercase">Life-to-date settlement curve</p>
               </div>
               <button className="p-2.5 bg-slate-800/50 border border-white/5 rounded-xl text-slate-400 hover:text-white transition-all"><RefreshCcw size={16} onClick={fetchData} className={loading ? 'animate-spin' : ''}/></button>
@@ -118,16 +120,19 @@ const WalletAndClaims = () => {
                         <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
                       </linearGradient>
                     </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
+                    <XAxis dataKey="date" stroke="#475569" fontSize={8} axisLine={false} tickLine={false} hide={chartData.length < 2} />
+                    <YAxis stroke="#475569" fontSize={8} axisLine={false} tickLine={false} hide={chartData.length < 2} />
                     <Tooltip 
                        contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', fontSize: '11px' }}
                     />
-                    <Area type="monotone" dataKey="value" stroke="#10b981" fill="url(#glow)" strokeWidth={2} />
+                    <Area type="monotone" dataKey="value" name="Cumulative" stroke="#10b981" fill="url(#glow)" strokeWidth={2} />
                   </AreaChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="h-full flex flex-col items-center justify-center text-slate-700 opacity-20">
-                  <Activity size={48} />
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] mt-4">Awaiting Signal Synchronization</p>
+                <div className="h-full flex flex-col items-center justify-center text-slate-700">
+                  <ShieldAlert size={48} className="opacity-20 mb-4" />
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40">Awaiting Signal Synchronization</p>
                 </div>
               )}
            </div>
@@ -153,7 +158,9 @@ const WalletAndClaims = () => {
               </div>
               <p className="text-xs text-slate-500 mt-4 leading-relaxed font-normal italic">Historical triggers are cross-referenced with local environmental nodes to ensure 100% precision in settlements.</p>
            </div>
-           <button className="mt-10 w-full py-4 bg-slate-900 border border-white/5 rounded-xl text-[10px] font-black text-slate-400 hover:text-white uppercase tracking-widest transition-all">Download Audit PDF</button>
+           <button className="mt-10 w-full py-4 bg-slate-900 border border-white/5 rounded-xl text-[10px] font-black text-slate-400 hover:text-white uppercase tracking-widest transition-all flex items-center justify-center gap-2">
+             <Download size={14} /> Download Audit PDF
+           </button>
         </div>
       </div>
 

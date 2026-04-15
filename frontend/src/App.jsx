@@ -13,7 +13,7 @@ function ProtectedRoute({ children }) {
   return children;
 }
 
-function App() {
+const App = React.memo(() => {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
@@ -46,6 +46,6 @@ function App() {
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes >
   );
-}
+});
 
 export default App;

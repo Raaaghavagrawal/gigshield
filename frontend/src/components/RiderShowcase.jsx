@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Star, ShieldCheck, IndianRupee, MapPin, Clock, Zap, CheckCircle2 } from 'lucide-react';
 
-const RiderShowcase = () => {
+const RiderShowcase = React.memo(() => {
   const rider = {
     name: "Rahul Sharma",
     platform: "Zomato",
@@ -41,8 +41,8 @@ const RiderShowcase = () => {
               className="glass-card"
               style={{ padding: '40px', position: 'relative', overflow: 'hidden' }}
             >
-               <div style={{ position: 'absolute', top: 0, right: 0, background: 'linear-gradient(135deg, #6366f1, #06b6d4)', padding: '8px 25px', borderRadius: '0 0 0 24px', fontSize: '0.75rem', fontWeight: 900, letterSpacing: '0.05em' }}>
-                  ELITE PARTNER
+               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', position: 'absolute', top: 0, right: 0, background: 'linear-gradient(135deg, #6366f1, #06b6d4)', padding: '8px 25px', borderRadius: '0 0 0 24px', fontSize: '0.75rem', fontWeight: 900, letterSpacing: '0.05em' }}>
+                  <CheckCircle2 size={14} className="text-white" /> ELITE PARTNER
                </div>
 
                <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '32px' }}>
@@ -55,6 +55,9 @@ const RiderShowcase = () => {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#f59e0b', fontSize: '1rem', fontWeight: 700 }}>
                        <Star size={18} fill="#f59e0b" /> {rider.rating} • {rider.platform}
                     </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#cbd5e1', fontSize: '0.9rem', fontWeight: 500, marginTop: '6px' }}>
+                       <MapPin size={16} className="text-rose-400" /> {rider.location}
+                    </div>
                   </div>
                </div>
 
@@ -64,7 +67,9 @@ const RiderShowcase = () => {
                     <div style={{ fontSize: '1.5rem', fontWeight: 900 }}>{rider.deliveries}</div>
                   </div>
                   <div style={{ background: 'rgba(99, 102, 241, 0.05)', padding: '20px', borderRadius: '16px', border: '1px solid rgba(99, 102, 241, 0.1)' }}>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)', fontWeight: 800, textTransform: 'uppercase', marginBottom: '8px' }}>Total Savings</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.7rem', color: 'var(--text-dim)', fontWeight: 800, textTransform: 'uppercase', marginBottom: '8px' }}>
+                       <IndianRupee size={12} /> Total Savings
+                    </div>
                     <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#10b981' }}>{rider.totalPayouts}</div>
                   </div>
                </div>
@@ -137,6 +142,6 @@ const RiderShowcase = () => {
       </div>
     </section>
   );
-};
+});
 
 export default RiderShowcase;

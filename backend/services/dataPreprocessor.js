@@ -2,8 +2,6 @@
  * Aegis Data Preprocessor
  * Cleans, normalizes, and smooths raw API data before it reaches the ML layer.
  */
-
-// In-memory rolling buffer: { city -> { rainfall: [], aqi: [] } }
 const rollingBuffer = {};
 const BUFFER_SIZE = 3;
 

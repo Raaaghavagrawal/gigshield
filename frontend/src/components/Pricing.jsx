@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Check, Info, ShieldCheck, Zap, Users, ShieldAlert, BadgeCheck, HelpCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -119,11 +119,14 @@ const Pricing = () => {
               
               <div className="space-y-4 mb-12">
                 {plan.features.map(f => (
-                  <div key={f} className="flex items-center gap-3 text-sm text-slate-300 font-medium">
-                    <div className="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
-                      <Check size={12} className="text-emerald-400" />
+                  <div key={f} className="flex items-center justify-between text-sm text-slate-300 font-medium group cursor-default">
+                    <div className="flex items-center gap-3">
+                      <div className="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
+                        <Check size={12} className="text-emerald-400" />
+                      </div>
+                      {f}
                     </div>
-                    {f}
+                    <Info size={14} className="text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                 ))}
               </div>

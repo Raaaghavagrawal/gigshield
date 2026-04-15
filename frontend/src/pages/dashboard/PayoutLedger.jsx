@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-const PayoutLedger = ({ wallet, InsuranceInfo }) => {
+const PayoutLedger = React.memo(({ wallet, InsuranceInfo }) => {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
       <div className="bg-[#111827] rounded-xl border border-gray-800 overflow-hidden shadow-xl hover:border-gray-700 transition-all duration-300">
@@ -51,6 +51,6 @@ const PayoutLedger = ({ wallet, InsuranceInfo }) => {
       <InsuranceInfo />
     </motion.div>
   );
-};
+});
 
 export default PayoutLedger;

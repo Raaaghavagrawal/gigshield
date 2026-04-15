@@ -53,6 +53,7 @@ function DashboardPage() {
       label: "Platform",
       items: [
         { id: "overview", label: "Overview", icon: <TrendingUp size={18} /> },
+        { id: "orders", label: "Gig Ledger", icon: <History size={18} /> },
         { id: "policy", label: "Policy Center", icon: <FileText size={18} /> },
         { id: "analytics", label: "Env. Analytics", icon: <BarChart3 size={18} /> },
       ]
@@ -138,9 +139,15 @@ function DashboardPage() {
                   <p className="text-[11px] text-slate-500 truncate mt-0.5">{user.platform || "Active Node"}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-1 px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider bg-emerald-500/10 text-emerald-400">
-                <MapPin size={9} />
-                {user.city?.split(" ")[0] || "City"}
+              <div className="flex items-center gap-2 mt-3">
+                <div className="flex items-center gap-1 px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider bg-emerald-500/10 text-emerald-400">
+                  <MapPin size={9} />
+                  {user.city?.split(" ")[0] || "City"}
+                </div>
+                <div className="flex items-center gap-1 px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider bg-blue-500/10 text-blue-400">
+                  <Package size={9} />
+                  {user.avg_daily_deliveries || 20} Load
+                </div>
               </div>
             </div>
           </div>
@@ -209,6 +216,7 @@ function DashboardPage() {
               {activeTab === "notifications" && <NotificationsCenter />}
               { activeTab === "profile" && <ProfilePage isDashboard={true} /> }
               { activeTab === "settings" && <Settings /> }
+              { activeTab === "orders" && <OrdersPage /> }
             </motion.div>
           </AnimatePresence>
         </main>
@@ -278,7 +286,15 @@ function NavItem({ item, active, onClick }) {
       <div className={`transition-colors duration-200 shrink-0 ${active ? 'text-white' : 'group-hover/nav:text-blue-400'}`}>
         {icon}
       </div>
-      <span className="truncate">{label}</span>
+      <span className="truncate flex-1 text-left">{label}</span>
+      <ChevronRight 
+        size={14} 
+        className={`transition-all duration-300 ${
+          active 
+            ? 'opacity-100 translate-x-0' 
+            : 'opacity-0 -translate-x-2 group-hover/nav:opacity-50 group-hover/nav:translate-x-0'
+        }`} 
+      />
       {active && (
         <motion.div 
           layoutId="active-nav-glow" 
