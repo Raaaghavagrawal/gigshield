@@ -108,7 +108,10 @@ You can seamlessly deploy all three services connected and configured with a sin
    - *Ensure you manually provide the MySQL database URL and secret variables directly in the Render dashboard.*
 
 ---
+## Pitch Deck
+https://drive.google.com/file/d/1b2u_FP77HGS6xYEQHNFyW7otOm_HkM4s/view?usp=drivesdk
 
+---
 ## 🏆 Built For
 **Guidewire Hackathon 2026** | Team Aegis | India's Gig Economy Protection
 
